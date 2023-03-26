@@ -18,4 +18,8 @@
     <Folder Include="Controllers\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\FitnessGym.Application\FitnessGym.Application.csproj" />
+  </ItemGroup>
+
 </Project>
