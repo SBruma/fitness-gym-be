@@ -1,5 +1,6 @@
 ﻿using FitnessGym.Domain.Configurations;
 using FitnessGym.Domain.Entities;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 

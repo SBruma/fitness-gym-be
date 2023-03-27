@@ -34,7 +34,7 @@ namespace FitnessGym.Infrastructure.Migrations
                         .IsConcurrencyToken()
                         .HasColumnType("text");
 
-                    b.Property<DateTime>("CreationDate")
+                    b.Property<DateTime>("CreatedOnUtc")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<DateOnly>("DateOfBirth")
@@ -59,6 +59,9 @@ namespace FitnessGym.Infrastructure.Migrations
                     b.Property<int>("Gender")
                         .HasColumnType("integer");
 
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
                     b.Property<string>("LastName")
                         .IsRequired()
                         .HasMaxLength(50)
@@ -68,6 +71,9 @@ namespace FitnessGym.Infrastructure.Migrations
                         .HasColumnType("boolean");
 
                     b.Property<DateTimeOffset?>("LockoutEnd")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime?>("ModifiedOnUtc")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("NormalizedEmail")

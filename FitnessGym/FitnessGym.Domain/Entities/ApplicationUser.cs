@@ -1,10 +1,10 @@
 ﻿using FitnessGym.Domain.Entities.Enums;
+using FitnessGym.Domain.Entities.Interfaces;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore.Query;
 
 namespace FitnessGym.Domain.Entities
 {
-    public class ApplicationUser : IdentityUser
+    public class ApplicationUser : IdentityUser, IAuditableEntity
     {
         [PersonalData]
         public string LastName { get; set; }
@@ -17,6 +17,8 @@ namespace FitnessGym.Domain.Entities
         public string? ProfilePicture { get; set; }
         [PersonalData]
         public Gender Gender { get; set; } = Gender.Other;
-        public DateTime CreationDate { get; set; }
+        public DateTime CreatedOnUtc { get; set; }
+        public DateTime? ModifiedOnUtc { get; set; }
+        public bool IsDeleted { get; set; }
     }
 }

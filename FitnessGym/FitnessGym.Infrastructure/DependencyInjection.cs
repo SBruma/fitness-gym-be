@@ -1,5 +1,6 @@
 ﻿using FitnessGym.Domain.Entities;
 using FitnessGym.Infrastructure.Data;
+using FitnessGym.Infrastructure.Data.Interceptors;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -13,9 +14,14 @@ namespace FitnessGym.Infrastructure
         {
             var assembly = typeof(DependencyInjection).Assembly.GetName().Name;
             var connectionString = configuration.GetConnectionString("DatabaseConnection") ?? string.Empty;
+            services.AddSingleton<UpdateAuditableEntitiesInterceptor>();
+
             services.AddDbContext<ApplicationDbContext>(options =>
             {
-                options.UseNpgsql(connectionString, sql => sql.MigrationsAssembly(assembly));
+                var auditableInterceptor = services.BuildServiceProvider().GetService<UpdateAuditableEntitiesInterceptor>()!;
+
+                options.UseNpgsql(connectionString, sql => sql.MigrationsAssembly(assembly))
+                    .AddInterceptors(auditableInterceptor);
             });
 
             services.AddIdentity<ApplicationUser, IdentityRole>()
@@ -42,7 +48,6 @@ namespace FitnessGym.Infrastructure
                     options.RemoveConsumedTokens = true;
                 })
                 .AddAspNetIdentity<ApplicationUser>();
-
 
             return services;
         }

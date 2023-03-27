@@ -24,8 +24,6 @@ namespace FitnessGym.Domain.Configurations
                 .IsRequired(false);
             builder.Property(user => user.Gender)
                 .IsRequired();
-            builder.Property(user => user.CreationDate)
-                .IsRequired();
         }
     }
 }
