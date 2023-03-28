@@ -1,4 +1,4 @@
-﻿using FitnessGym.Domain.Entities;
+﻿using FitnessGym.Domain.Entities.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 

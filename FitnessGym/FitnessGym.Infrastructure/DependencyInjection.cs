@@ -1,4 +1,4 @@
-﻿using FitnessGym.Domain.Entities;
+﻿using FitnessGym.Domain.Entities.Identity;
 using FitnessGym.Infrastructure.Data;
 using FitnessGym.Infrastructure.Data.Interceptors;
 using Microsoft.AspNetCore.Identity;
@@ -24,7 +24,7 @@ namespace FitnessGym.Infrastructure
                     .AddInterceptors(auditableInterceptor);
             });
 
-            services.AddIdentity<ApplicationUser, IdentityRole>()
+            services.AddIdentity<ApplicationUser, IdentityRole<Guid>>()
                 .AddEntityFrameworkStores<ApplicationDbContext>();
 
             services.AddIdentityServer(options =>

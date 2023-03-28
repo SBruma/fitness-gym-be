@@ -2,9 +2,9 @@
 using FitnessGym.Domain.Entities.Interfaces;
 using Microsoft.AspNetCore.Identity;
 
-namespace FitnessGym.Domain.Entities
+namespace FitnessGym.Domain.Entities.Identity
 {
-    public class ApplicationUser : IdentityUser, IAuditableEntity
+    public class ApplicationUser : IdentityUser<Guid>, IAuditableEntity
     {
         [PersonalData]
         public string LastName { get; set; }
@@ -20,5 +20,6 @@ namespace FitnessGym.Domain.Entities
         public DateTime CreatedOnUtc { get; set; }
         public DateTime? ModifiedOnUtc { get; set; }
         public bool IsDeleted { get; set; }
+        public List<StaffSchedule> StaffSchedule { get; } = new();
     }
 }
