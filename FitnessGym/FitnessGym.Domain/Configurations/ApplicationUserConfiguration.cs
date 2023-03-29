@@ -17,6 +17,8 @@ namespace FitnessGym.Domain.Configurations
             builder.Property(user => user.DateOfBirth)
                 .HasColumnType("date")
                 .IsRequired();
+            builder.Property(user => user.PhoneNumber)
+                .HasMaxLength(15);
             builder.Property(user => user.EmergencyPhoneNumber)
                 .HasMaxLength(15)
                 .IsRequired(false);

@@ -21,5 +21,6 @@ namespace FitnessGym.Domain.Entities.Identity
         public DateTime? ModifiedOnUtc { get; set; }
         public bool IsDeleted { get; set; }
         public List<StaffSchedule> StaffSchedule { get; } = new();
+        public List<Membership> Memberships { get; } = new();
     }
 }

@@ -25,6 +25,8 @@ namespace FitnessGym.Infrastructure.Data
             new ApplicationUserConfiguration().Configure(builder.Entity<ApplicationUser>());
             new StaffBookingConfiguration().Configure(builder.Entity<StaffBooking>());
             new StaffScheduleConfiguration().Configure(builder.Entity<StaffSchedule>()); 
+            new GymConfiguration().Configure(builder.Entity<Gym>());
+            new MembershipConfiguration().Configure(builder.Entity<Membership>());
         }
     }
 }
