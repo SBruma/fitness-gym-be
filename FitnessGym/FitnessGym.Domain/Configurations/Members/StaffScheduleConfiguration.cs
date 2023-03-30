@@ -22,6 +22,7 @@ namespace FitnessGym.Domain.Configurations
             builder.HasOne(schedule => schedule.Staff)
                 .WithMany(user => user.StaffSchedule)
                 .HasForeignKey(schedule => schedule.StaffId);
+            builder.HasIndex(schedule => new { schedule.StaffId, schedule.DayOfWeek }).IsUnique();
 
             builder.ToTable(t => t.HasCheckConstraint(SCHEDULE_CONSTRAINT_NAME, SCHEDULE_CONSTRAINT));
             builder.Property(schedule => schedule.StartTime).HasDefaultValue(TimeSpan.FromHours(START_TIME)).IsRequired();

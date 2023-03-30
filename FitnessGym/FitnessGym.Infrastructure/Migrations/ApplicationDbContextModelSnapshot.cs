@@ -22,7 +22,90 @@ namespace FitnessGym.Infrastructure.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("FitnessGym.Domain.Entities.Gym", b =>
+            modelBuilder.Entity("FitnessGym.Domain.Entities.Gyms.Equipment", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("Category")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("CreatedOnUtc")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(250)
+                        .HasColumnType("character varying(250)");
+
+                    b.Property<Guid>("GymId")
+                        .HasColumnType("uuid");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<int>("Level")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("ModelNumber")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
+
+                    b.Property<DateTime?>("ModifiedOnUtc")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(75)
+                        .HasColumnType("character varying(75)");
+
+                    b.Property<DateOnly>("PurchaseDate")
+                        .HasColumnType("date");
+
+                    b.Property<string>("SerialNumber")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("integer");
+
+                    b.Property<DateOnly>("WarrantyExpirationDate")
+                        .HasColumnType("date");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("GymId", "Level");
+
+                    b.ToTable("Equipments", (string)null);
+                });
+
+            modelBuilder.Entity("FitnessGym.Domain.Entities.Gyms.Floor", b =>
+                {
+                    b.Property<Guid>("GymId")
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("Level")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("CreatedOnUtc")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<DateTime?>("ModifiedOnUtc")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("GymId", "Level");
+
+                    b.HasIndex("GymId", "Level")
+                        .IsUnique();
+
+                    b.ToTable("Floors", (string)null);
+                });
+
+            modelBuilder.Entity("FitnessGym.Domain.Entities.Gyms.Gym", b =>
                 {
                     b.Property<Guid>("Id")
                         .HasColumnType("uuid");
@@ -54,6 +137,45 @@ namespace FitnessGym.Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Gyms", (string)null);
+                });
+
+            modelBuilder.Entity("FitnessGym.Domain.Entities.Gyms.MaintenanceHistory", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid");
+
+                    b.Property<decimal?>("Cost")
+                        .HasColumnType("numeric");
+
+                    b.Property<DateTime>("CreatedOnUtc")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("text");
+
+                    b.Property<DateOnly>("EndDate")
+                        .HasColumnType("date");
+
+                    b.Property<Guid>("EquipmentId")
+                        .HasColumnType("uuid");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<DateTime?>("ModifiedOnUtc")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateOnly>("StartDate")
+                        .HasColumnType("date");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("EquipmentId");
+
+                    b.ToTable("MaintenanceHistory", t =>
+                        {
+                            t.HasCheckConstraint("CK_Maintenance_Interval", "(\"StartDate\" < \"EndDate\")");
+                        });
                 });
 
             modelBuilder.Entity("FitnessGym.Domain.Entities.Identity.ApplicationUser", b =>
@@ -154,7 +276,7 @@ namespace FitnessGym.Infrastructure.Migrations
                     b.ToTable("AspNetUsers", (string)null);
                 });
 
-            modelBuilder.Entity("FitnessGym.Domain.Entities.Membership", b =>
+            modelBuilder.Entity("FitnessGym.Domain.Entities.Members.Membership", b =>
                 {
                     b.Property<Guid>("Id")
                         .HasColumnType("uuid");
@@ -272,6 +394,9 @@ namespace FitnessGym.Infrastructure.Migrations
                         .HasDefaultValue(new TimeSpan(0, 8, 0, 0, 0));
 
                     b.HasKey("StaffId", "DayOfWeek");
+
+                    b.HasIndex("StaffId", "DayOfWeek")
+                        .IsUnique();
 
                     b.ToTable("StaffSchedules", null, t =>
                         {
@@ -409,9 +534,53 @@ namespace FitnessGym.Infrastructure.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("FitnessGym.Domain.Entities.Gym", b =>
+            modelBuilder.Entity("FitnessGym.Domain.Entities.Gyms.Equipment", b =>
                 {
-                    b.OwnsOne("FitnessGym.Domain.Entities.Address", "Address", b1 =>
+                    b.HasOne("FitnessGym.Domain.Entities.Gyms.Floor", "Floor")
+                        .WithMany("Equipments")
+                        .HasForeignKey("GymId", "Level")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.OwnsOne("FitnessGym.Domain.Entities.Gyms.FloorLocation", "FloorLocation", b1 =>
+                        {
+                            b1.Property<Guid>("EquipmentId")
+                                .HasColumnType("uuid");
+
+                            b1.Property<int>("Column")
+                                .HasColumnType("integer");
+
+                            b1.Property<int>("Row")
+                                .HasColumnType("integer");
+
+                            b1.HasKey("EquipmentId");
+
+                            b1.ToTable("Equipments");
+
+                            b1.WithOwner()
+                                .HasForeignKey("EquipmentId");
+                        });
+
+                    b.Navigation("Floor");
+
+                    b.Navigation("FloorLocation")
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("FitnessGym.Domain.Entities.Gyms.Floor", b =>
+                {
+                    b.HasOne("FitnessGym.Domain.Entities.Gyms.Gym", "Gym")
+                        .WithMany("Floors")
+                        .HasForeignKey("GymId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Gym");
+                });
+
+            modelBuilder.Entity("FitnessGym.Domain.Entities.Gyms.Gym", b =>
+                {
+                    b.OwnsOne("FitnessGym.Domain.Entities.Gyms.Address", "Address", b1 =>
                         {
                             b1.Property<Guid>("GymId")
                                 .HasColumnType("uuid");
@@ -439,7 +608,7 @@ namespace FitnessGym.Infrastructure.Migrations
                                 .HasForeignKey("GymId");
                         });
 
-                    b.OwnsOne("FitnessGym.Domain.Entities.GeoCoordinate", "GeoCoordinate", b1 =>
+                    b.OwnsOne("FitnessGym.Domain.Entities.Gyms.GeoCoordinate", "GeoCoordinate", b1 =>
                         {
                             b1.Property<Guid>("GymId")
                                 .HasColumnType("uuid");
@@ -458,7 +627,7 @@ namespace FitnessGym.Infrastructure.Migrations
                                 .HasForeignKey("GymId");
                         });
 
-                    b.OwnsOne("FitnessGym.Domain.Entities.Layout", "Layout", b1 =>
+                    b.OwnsOne("FitnessGym.Domain.Entities.Gyms.Layout", "Layout", b1 =>
                         {
                             b1.Property<Guid>("GymId")
                                 .HasColumnType("uuid");
@@ -490,9 +659,20 @@ namespace FitnessGym.Infrastructure.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("FitnessGym.Domain.Entities.Membership", b =>
+            modelBuilder.Entity("FitnessGym.Domain.Entities.Gyms.MaintenanceHistory", b =>
                 {
-                    b.HasOne("FitnessGym.Domain.Entities.Gym", "Gym")
+                    b.HasOne("FitnessGym.Domain.Entities.Gyms.Equipment", "Equipment")
+                        .WithMany("MaintenanceHistory")
+                        .HasForeignKey("EquipmentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Equipment");
+                });
+
+            modelBuilder.Entity("FitnessGym.Domain.Entities.Members.Membership", b =>
+                {
+                    b.HasOne("FitnessGym.Domain.Entities.Gyms.Gym", "Gym")
                         .WithMany("Memberships")
                         .HasForeignKey("GymId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -590,8 +770,20 @@ namespace FitnessGym.Infrastructure.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("FitnessGym.Domain.Entities.Gym", b =>
+            modelBuilder.Entity("FitnessGym.Domain.Entities.Gyms.Equipment", b =>
                 {
+                    b.Navigation("MaintenanceHistory");
+                });
+
+            modelBuilder.Entity("FitnessGym.Domain.Entities.Gyms.Floor", b =>
+                {
+                    b.Navigation("Equipments");
+                });
+
+            modelBuilder.Entity("FitnessGym.Domain.Entities.Gyms.Gym", b =>
+                {
+                    b.Navigation("Floors");
+
                     b.Navigation("Memberships");
                 });
 
