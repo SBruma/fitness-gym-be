@@ -1,5 +1,6 @@
 ﻿using FitnessGym.Domain.Entities.Enums;
 using FitnessGym.Domain.Entities.Interfaces;
+using FitnessGym.Domain.Entities.Members;
 using Microsoft.AspNetCore.Identity;
 
 namespace FitnessGym.Domain.Entities.Identity

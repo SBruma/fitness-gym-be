@@ -1,6 +1,7 @@
 ﻿using FitnessGym.Domain.Entities.Interfaces;
+using FitnessGym.Domain.Entities.Members;
 
-namespace FitnessGym.Domain.Entities
+namespace FitnessGym.Domain.Entities.Gyms
 {
     public class Gym : IAuditableEntity
     {

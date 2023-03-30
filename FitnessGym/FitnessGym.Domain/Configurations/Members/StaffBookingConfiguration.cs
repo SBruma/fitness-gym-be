@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace FitnessGym.Domain.Configurations
+namespace FitnessGym.Domain.Configurations.Members
 {
     public class StaffBookingConfiguration : IEntityTypeConfiguration<StaffBooking>
     {

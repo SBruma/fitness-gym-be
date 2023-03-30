@@ -1,4 +1,4 @@
-﻿namespace FitnessGym.Domain.Entities
+﻿namespace FitnessGym.Domain.Entities.Gyms
 {
     public class Layout
     {
