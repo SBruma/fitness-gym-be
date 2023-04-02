@@ -4,9 +4,9 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace FitnessGym.Domain.Configurations
 {
-    internal class AuditableEntityConfiguration : IEntityTypeConfiguration<IAuditableEntity>
+    public class AuditableEntityConfiguration<T> : IEntityTypeConfiguration<T> where T : class, IAuditableEntity
     {
-        public void Configure(EntityTypeBuilder<IAuditableEntity> builder)
+        public void Configure(EntityTypeBuilder<T> builder)
         {
             builder.Property(e => e.IsDeleted)
                 .HasDefaultValue(false)

@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace FitnessGym.Domain.Configurations
 {
-    public class StaffScheduleConfiguration : IEntityTypeConfiguration<StaffSchedule>
+    public class StaffScheduleConfiguration : AuditableEntityConfiguration<StaffSchedule>
     {
         const int START_TIME = 8;
         const int END_TIME = 12;
@@ -17,12 +17,15 @@ namespace FitnessGym.Domain.Configurations
 
         public void Configure(EntityTypeBuilder<StaffSchedule> builder)
         {
+            base.Configure(builder);
+
             builder.ToTable("StaffSchedules");
             builder.HasKey(schedule => new { schedule.StaffId, schedule.DayOfWeek });
+            builder.HasIndex(schedule => new { schedule.StaffId, schedule.DayOfWeek }).IsUnique();
+
             builder.HasOne(schedule => schedule.Staff)
                 .WithMany(user => user.StaffSchedule)
                 .HasForeignKey(schedule => schedule.StaffId);
-            builder.HasIndex(schedule => new { schedule.StaffId, schedule.DayOfWeek }).IsUnique();
 
             builder.ToTable(t => t.HasCheckConstraint(SCHEDULE_CONSTRAINT_NAME, SCHEDULE_CONSTRAINT));
             builder.Property(schedule => schedule.StartTime).HasDefaultValue(TimeSpan.FromHours(START_TIME)).IsRequired();

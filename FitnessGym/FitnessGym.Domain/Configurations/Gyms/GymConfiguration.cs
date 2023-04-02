@@ -4,17 +4,21 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace FitnessGym.Domain.Configurations.Gyms
 {
-    public class GymConfiguration : IEntityTypeConfiguration<Gym>
+    public class GymConfiguration : AuditableEntityConfiguration<Gym>
     {
         public void Configure(EntityTypeBuilder<Gym> builder)
         {
+            base.Configure(builder);
+
             builder.ToTable("Gyms");
 
             builder.HasKey(gym => gym.Id);
+            builder.HasIndex(gym => gym.Id)
+                .IsUnique();
 
             builder.Property(gym => gym.Id)
                 .HasConversion(gymId => gymId.Value,
-                value => new GymId(value));
+                                value => new GymId(value));
 
             builder.Property(gym => gym.Name)
                 .HasMaxLength(50)

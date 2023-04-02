@@ -4,10 +4,15 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace FitnessGym.Domain.Configurations.Members
 {
-    public class ApplicationUserConfiguration : IEntityTypeConfiguration<ApplicationUser>
+    public class ApplicationUserConfiguration : AuditableEntityConfiguration<ApplicationUser>
     {
         public void Configure(EntityTypeBuilder<ApplicationUser> builder)
         {
+            base.Configure(builder);
+
+            builder.HasIndex(user => user.Id)
+                .IsUnique();
+
             builder.Property(user => user.FirstName)
                 .HasMaxLength(50)
                 .IsRequired();
