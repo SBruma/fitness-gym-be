@@ -19,7 +19,6 @@ namespace FitnessGym.Domain.Configurations
         {
             base.Configure(builder);
 
-            builder.ToTable("StaffSchedules");
             builder.HasKey(schedule => new { schedule.StaffId, schedule.DayOfWeek });
             builder.HasIndex(schedule => new { schedule.StaffId, schedule.DayOfWeek }).IsUnique();
 
