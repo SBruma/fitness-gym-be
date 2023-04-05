@@ -4,7 +4,6 @@ using FitnessGym.Domain.Configurations.Members;
 using FitnessGym.Domain.Entities;
 using FitnessGym.Domain.Entities.Gyms;
 using FitnessGym.Domain.Entities.Identity;
-using FitnessGym.Domain.Entities.Interfaces;
 using FitnessGym.Domain.Entities.Members;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
