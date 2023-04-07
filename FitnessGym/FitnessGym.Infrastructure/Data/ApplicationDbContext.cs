@@ -8,6 +8,7 @@ using FitnessGym.Domain.Entities.Members;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using System.Reflection.Emit;
 
 namespace FitnessGym.Infrastructure.Data
 {
@@ -19,6 +20,7 @@ namespace FitnessGym.Infrastructure.Data
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
+            builder.HasPostgresExtension("uuid-ossp");
             ConfigureEntities(builder);
 
             base.OnModelCreating(builder);

@@ -18,7 +18,8 @@ namespace FitnessGym.Domain.Configurations.Gyms
 
             builder.Property(gym => gym.Id)
                 .HasConversion(gymId => gymId.Value,
-                                value => new GymId(value));
+                                value => new GymId(value))
+                .HasDefaultValueSql("uuid_generate_v4()");
 
             builder.Property(gym => gym.Name)
                 .HasMaxLength(50)
