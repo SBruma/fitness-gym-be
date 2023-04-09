@@ -1,5 +1,6 @@
 ﻿using FitnessGym.Application.Dtos.Gyms;
 using FitnessGym.Domain.Entities.Gyms;
+using Microsoft.Extensions.Localization;
 using Riok.Mapperly.Abstractions;
 
 namespace FitnessGym.Application.Mapper.Gyms
@@ -11,7 +12,8 @@ namespace FitnessGym.Application.Mapper.Gyms
         public partial void UpdateGymToGym(UpdateGymDto updateGymDto, Gym gym);
         public partial GymDto GymToGymDto(Gym gym);
 
-        public List<GymDto> GymsToGymsDto(List<Gym> gyms) {
+        public List<GymDto> GymsToGymsDto(List<Gym> gyms)
+        {
             return gyms.Select(MapGymToGymDto).ToList();
         }
 

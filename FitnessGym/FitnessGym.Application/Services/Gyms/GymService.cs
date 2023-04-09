@@ -39,7 +39,7 @@ namespace FitnessGym.Application.Services.Gyms
                 _unitOfWork.GymRepository.Delete(gym);
                 await _unitOfWork.SaveChangesAsync();
             }
-            
+
             return result;
         }
 
@@ -66,17 +66,17 @@ namespace FitnessGym.Application.Services.Gyms
             var gym = await _unitOfWork.GymRepository.GetById(gymToUpdateId);
             var result = Result.OkIf(gym is not null, new GymNotFoundError(gymToUpdateId));
 
-            if (result.IsSuccess)
+            if (result.IsFailed)
             {
-                _gymMapper.UpdateGymToGym(updateGymDto, gym);
-                _unitOfWork.GymRepository.Update(gym);
-                await _unitOfWork.SaveChangesAsync();
-                var gymDto = _gymMapper.MapGymToGymDto(gym);
-
-                return Result.Ok(gymDto);
+                return result;
             }
 
-            return result;
+            _gymMapper.UpdateGymToGym(updateGymDto, gym);
+            _unitOfWork.GymRepository.Update(gym);
+            await _unitOfWork.SaveChangesAsync();
+            var gymDto = _gymMapper.MapGymToGymDto(gym);
+
+            return Result.Ok(gymDto);
         }
     }
 }

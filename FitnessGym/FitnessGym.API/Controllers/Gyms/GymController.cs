@@ -1,5 +1,4 @@
 ﻿using FitnessGym.Application.Dtos.Gyms;
-using FitnessGym.Application.Errors.Gyms;
 using FitnessGym.Application.Services.Interfaces.Gyms;
 using FitnessGym.Domain.Entities.Gyms;
 using Microsoft.AspNetCore.Mvc;
@@ -42,7 +41,7 @@ namespace FitnessGym.API.Controllers.Gyms
         [HttpPost]
         [ProducesResponseType(typeof(GymDto), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
-        public async Task<IActionResult> Insert([FromBody]CreateGymDto request)
+        public async Task<IActionResult> Insert([FromBody] CreateGymDto request)
         {
             var result = await _gymService.Create(request);
 
