@@ -16,23 +16,27 @@ builder.Services.AddSwaggerGen(option =>
     option.OperationFilter<LanguageHeaderParameterFilter>();
 });
 
+builder.Host.UseSerilog((context, configuration) =>
+{
+    configuration.ReadFrom.Configuration(context.Configuration);
+    configuration.Enrich.WithThreadId();
+    configuration.Enrich.FromLogContext();
+});
+
 builder.Services.AddLocalization(options => options.ResourcesPath = "Resources");
 
 builder.Services.AddInfrastructure(builder.Configuration);
 builder.Services.AddApplication();
 
-builder.Host.UseSerilog((context, configuration) =>
-    configuration.ReadFrom.Configuration(context.Configuration));
-
 var app = builder.Build();
+
+app.UseSerilogRequestLogging();
 
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-
-app.UseSerilogRequestLogging();
 
 app.UseHttpsRedirection();
 
@@ -44,7 +48,6 @@ app.UseRequestLocalization(new RequestLocalizationOptions
     SupportedCultures = supportedCultures,
     SupportedUICultures = supportedCultures
 });
-
 
 app.UseAuthorization();
 

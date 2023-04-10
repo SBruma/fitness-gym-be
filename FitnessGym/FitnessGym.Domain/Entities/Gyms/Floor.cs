@@ -11,5 +11,16 @@ namespace FitnessGym.Domain.Entities.Gyms
         public DateTime? ModifiedOnUtc { get; set; }
         public bool IsDeleted { get; set; }
         public List<Equipment> Equipments { get; } = new();
+
+        public Floor()
+        {
+
+        }
+
+        public Floor(GymId gymId, int level)
+        {
+            GymId = gymId;
+            Level = level;
+        }
     }
 }

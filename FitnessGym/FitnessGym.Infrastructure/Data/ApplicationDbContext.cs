@@ -1,21 +1,18 @@
-﻿using FitnessGym.Domain.Configurations;
-using FitnessGym.Domain.Configurations.Gyms;
+﻿using FitnessGym.Domain.Configurations.Gyms;
 using FitnessGym.Domain.Configurations.Members;
-using FitnessGym.Domain.Entities;
 using FitnessGym.Domain.Entities.Gyms;
 using FitnessGym.Domain.Entities.Identity;
 using FitnessGym.Domain.Entities.Members;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using System.Reflection.Emit;
 
 namespace FitnessGym.Infrastructure.Data
 {
     public class ApplicationDbContext : IdentityDbContext<ApplicationUser, IdentityRole<Guid>, Guid>
     {
-        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options) 
-        { 
+        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
+        {
         }
 
         protected override void OnModelCreating(ModelBuilder builder)
@@ -30,7 +27,7 @@ namespace FitnessGym.Infrastructure.Data
         {
             new ApplicationUserConfiguration().Configure(builder.Entity<ApplicationUser>());
             new StaffBookingConfiguration().Configure(builder.Entity<StaffBooking>());
-            new StaffScheduleConfiguration().Configure(builder.Entity<StaffSchedule>()); 
+            new StaffScheduleConfiguration().Configure(builder.Entity<StaffSchedule>());
             new GymConfiguration().Configure(builder.Entity<Gym>());
             new MembershipConfiguration().Configure(builder.Entity<Membership>());
             new FloorConfiguration().Configure(builder.Entity<Floor>());

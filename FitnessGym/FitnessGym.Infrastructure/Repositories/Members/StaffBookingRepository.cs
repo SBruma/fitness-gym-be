@@ -1,4 +1,4 @@
-﻿using FitnessGym.Domain.Entities;
+﻿using FitnessGym.Domain.Entities.Members;
 using FitnessGym.Infrastructure.Data;
 using FitnessGym.Infrastructure.Repositories.Interfaces.Members;
 

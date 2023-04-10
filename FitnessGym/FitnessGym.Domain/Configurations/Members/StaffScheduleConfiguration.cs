@@ -1,8 +1,8 @@
-﻿using FitnessGym.Domain.Entities;
+﻿using FitnessGym.Domain.Entities.Members;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace FitnessGym.Domain.Configurations
+namespace FitnessGym.Domain.Configurations.Members
 {
     public class StaffScheduleConfiguration : AuditableEntityConfiguration<StaffSchedule>
     {

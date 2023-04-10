@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 
 namespace FitnessGym.Infrastructure
 {
@@ -24,7 +25,7 @@ namespace FitnessGym.Infrastructure
             services.AddDbContext<ApplicationDbContext>(options =>
             {
                 var auditableInterceptor = services.BuildServiceProvider().GetService<UpdateAuditableEntitiesInterceptor>()!;
-
+                options.LogTo(Console.WriteLine, new[] { DbLoggerCategory.Database.Command.Name }, LogLevel.Information);
                 options.UseNpgsql(connectionString, sql => sql.MigrationsAssembly(assembly))
                     .AddInterceptors(auditableInterceptor);
             });

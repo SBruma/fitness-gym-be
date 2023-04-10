@@ -1,6 +1,6 @@
 ﻿using FitnessGym.Application.Dtos.Gyms;
 using FitnessGym.Application.Errors.Gyms;
-using FitnessGym.Application.Mapper.Gyms;
+using FitnessGym.Application.Mappers;
 using FitnessGym.Application.Services.Interfaces.Gyms;
 using FitnessGym.Domain.Entities.Gyms;
 using FitnessGym.Infrastructure.Data.Interfaces;
@@ -11,22 +11,27 @@ namespace FitnessGym.Application.Services.Gyms
     public class GymService : IGymService
     {
         private readonly IUnitOfWork _unitOfWork;
-        private readonly GymMapper _gymMapper;
+        private readonly IMapper _mapper;
 
-        public GymService(IUnitOfWork unitOfWork)
+        public GymService(IUnitOfWork unitOfWork, IMapper mapper)
         {
             _unitOfWork = unitOfWork;
-            _gymMapper = new GymMapper();
+            _mapper = mapper;
         }
 
         public async Task<Result<GymDto>> Create(CreateGymDto createGymDto)
         {
-            var gym = _gymMapper.CreateGymToGym(createGymDto);
+            var gym = _mapper.GymMapper.CreateGymToGym(createGymDto);
             await _unitOfWork.GymRepository.Add(gym);
+
+            int floorIndexNumber = 1;
+            gym.Floors.AddRange(Enumerable.Range(1, gym.Layout.FloorNumber)
+                                            .Select(_ => new Floor(gym.Id, floorIndexNumber++)));
+
             await _unitOfWork.SaveChangesAsync();
             var result = Result.OkIf(gym.Id is not null, new GymNotCreatedError());
 
-            return result.IsSuccess ? Result.Ok(_gymMapper.MapGymToGymDto(gym)) : result;
+            return result.IsSuccess ? Result.Ok(_mapper.GymMapper.MapGymToGymDto(gym)) : result;
         }
 
         public async Task<Result> Delete(GymId gymId)
@@ -49,14 +54,14 @@ namespace FitnessGym.Application.Services.Gyms
             var result = Result.OkIf(gym is not null, new GymNotFoundError(gymId));
 
             return result.IsSuccess
-                ? _gymMapper.MapGymToGymDto(gym)
+                ? _mapper.GymMapper.MapGymToGymDto(gym)
                 : result;
         }
 
         public async Task<Result<List<GymDto>>> GetAll()
         {
             var gyms = await _unitOfWork.GymRepository.GetAll();
-            var gymsDto = _gymMapper.GymsToGymsDto(gyms);
+            var gymsDto = _mapper.GymMapper.GymsToGymsDto(gyms);
 
             return Result.Ok(gymsDto);
         }
@@ -71,10 +76,10 @@ namespace FitnessGym.Application.Services.Gyms
                 return result;
             }
 
-            _gymMapper.UpdateGymToGym(updateGymDto, gym);
+            _mapper.GymMapper.UpdateGymToGym(updateGymDto, gym);
             _unitOfWork.GymRepository.Update(gym);
             await _unitOfWork.SaveChangesAsync();
-            var gymDto = _gymMapper.MapGymToGymDto(gym);
+            var gymDto = _mapper.GymMapper.MapGymToGymDto(gym);
 
             return Result.Ok(gymDto);
         }

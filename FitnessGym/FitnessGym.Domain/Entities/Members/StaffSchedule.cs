@@ -1,7 +1,7 @@
 ﻿using FitnessGym.Domain.Entities.Identity;
 using FitnessGym.Domain.Entities.Interfaces;
 
-namespace FitnessGym.Domain.Entities
+namespace FitnessGym.Domain.Entities.Members
 {
     public class StaffSchedule : IAuditableEntity
     {

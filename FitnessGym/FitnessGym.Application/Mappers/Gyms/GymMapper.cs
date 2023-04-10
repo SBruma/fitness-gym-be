@@ -1,9 +1,8 @@
 ﻿using FitnessGym.Application.Dtos.Gyms;
 using FitnessGym.Domain.Entities.Gyms;
-using Microsoft.Extensions.Localization;
 using Riok.Mapperly.Abstractions;
 
-namespace FitnessGym.Application.Mapper.Gyms
+namespace FitnessGym.Application.Mappers.Gyms
 {
     [Mapper]
     public partial class GymMapper

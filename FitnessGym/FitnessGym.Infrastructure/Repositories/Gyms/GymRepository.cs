@@ -13,7 +13,17 @@ namespace FitnessGym.Infrastructure.Repositories.Gyms
 
         public async Task<List<Gym>> GetAll()
         {
-            return await _dbSet.Where(gym => gym.IsDeleted == false).AsNoTracking().ToListAsync();
+            return await _dbSet.AsNoTracking()
+                                .Where(gym => gym.IsDeleted == false)
+                                .ToListAsync();
+        }
+
+        public override async Task<Gym?> GetById(object entityId, CancellationToken cancellationToken = default)
+        {
+            return await _dbSet.AsNoTracking()
+                                .Include(gym => gym.Floors)
+                                .Where(gym => gym.Id == (GymId)entityId)
+                                .FirstOrDefaultAsync();
         }
     }
 }
