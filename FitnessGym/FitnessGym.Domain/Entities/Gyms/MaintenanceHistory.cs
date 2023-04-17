@@ -16,5 +16,5 @@ namespace FitnessGym.Domain.Entities.Gyms
         public bool IsDeleted { get; set; }
     }
 
-    public record MaintenanceHistoryId(Guid Value);
+    public record struct MaintenanceHistoryId(Guid Value);
 }

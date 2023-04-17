@@ -1,7 +1,8 @@
-﻿namespace FitnessGym.Application.Dtos.Gyms
+﻿using FitnessGym.Application.Dtos.Gyms.Entities;
+
+namespace FitnessGym.Application.Dtos.Gyms
 {
-    public class GymDto : CreateGymDto
+    public class GymDto : GymEntityDto
     {
-        public Guid Id { get; set; }
     }
 }

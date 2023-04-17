@@ -23,13 +23,10 @@ namespace FitnessGym.Application.Services.Gyms
         {
             var gym = _mapper.GymMapper.CreateGymToGym(createGymDto);
             await _unitOfWork.GymRepository.Add(gym);
-
-            int floorIndexNumber = 1;
-            gym.Floors.AddRange(Enumerable.Range(1, gym.Layout.FloorNumber)
-                                            .Select(_ => new Floor(gym.Id, floorIndexNumber++)));
+            gym.Floors.AddRange(createGymDto.Floors.Select(floor => new Floor { GymId = gym.Id, Level = floor.Floor }));
 
             await _unitOfWork.SaveChangesAsync();
-            var result = Result.OkIf(gym.Id is not null, new GymNotCreatedError());
+            var result = Result.OkIf(!gym.Id.Equals(Guid.Empty), new GymNotCreatedError());
 
             return result.IsSuccess ? Result.Ok(_mapper.GymMapper.MapGymToGymDto(gym)) : result;
         }
@@ -48,13 +45,13 @@ namespace FitnessGym.Application.Services.Gyms
             return result;
         }
 
-        public async Task<Result<GymDto>> Get(GymId gymId)
+        public async Task<Result<ExpandedGymDto>> Get(GymId gymId)
         {
             var gym = await _unitOfWork.GymRepository.GetById(gymId);
             var result = Result.OkIf(gym is not null, new GymNotFoundError(gymId));
 
             return result.IsSuccess
-                ? _mapper.GymMapper.MapGymToGymDto(gym)
+                ? _mapper.GymMapper.MapGymToExpandedGymDto(gym)
                 : result;
         }
 
@@ -66,7 +63,7 @@ namespace FitnessGym.Application.Services.Gyms
             return Result.Ok(gymsDto);
         }
 
-        public async Task<Result<GymDto>> Update(GymId gymToUpdateId, UpdateGymDto updateGymDto)
+        public async Task<Result<GymDto>> Update(GymId gymToUpdateId, UpdateDetailsGymDto updateGymDto)
         {
             var gym = await _unitOfWork.GymRepository.GetById(gymToUpdateId);
             var result = Result.OkIf(gym is not null, new GymNotFoundError(gymToUpdateId));

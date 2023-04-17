@@ -21,7 +21,7 @@ namespace FitnessGym.Infrastructure.Repositories.Gyms
         public override async Task<Gym?> GetById(object entityId, CancellationToken cancellationToken = default)
         {
             return await _dbSet.AsNoTracking()
-                                .Include(gym => gym.Floors)
+                                .Include(gym => gym.Floors.Where(floor => floor.IsDeleted == false))
                                 .Where(gym => gym.Id == (GymId)entityId)
                                 .FirstOrDefaultAsync();
         }

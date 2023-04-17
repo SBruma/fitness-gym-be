@@ -24,5 +24,5 @@ namespace FitnessGym.Domain.Entities.Gyms
         public List<MaintenanceHistory> MaintenanceHistory { get; } = new();
     }
 
-    public record EquipmentId(Guid Value);
+    public record struct EquipmentId(Guid Value);
 }

@@ -19,5 +19,5 @@ namespace FitnessGym.Domain.Entities.Gyms
         public List<Floor> Floors { get; set; } = new();
     }
 
-    public record GymId(Guid Value);
+    public record struct GymId(Guid Value);
 }

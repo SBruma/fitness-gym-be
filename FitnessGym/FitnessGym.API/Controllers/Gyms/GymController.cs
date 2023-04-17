@@ -28,7 +28,7 @@ namespace FitnessGym.API.Controllers.Gyms
 
         // GET api/<GymController>/5
         [HttpGet("{id}")]
-        [ProducesResponseType(typeof(List<GymDto>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(List<ExpandedGymDto>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         public async Task<IActionResult> Get(Guid id)
         {
@@ -50,7 +50,7 @@ namespace FitnessGym.API.Controllers.Gyms
 
         // DELETE api/<GymController>/5
         [HttpDelete("{id}")]
-        [ProducesResponseType(typeof(List<GymDto>), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         public async Task<IActionResult> Delete(Guid id)
         {
@@ -63,7 +63,7 @@ namespace FitnessGym.API.Controllers.Gyms
         [HttpPut("{id}")]
         [ProducesResponseType(typeof(List<GymDto>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
-        public async Task<IActionResult> Update(Guid id, [FromBody] UpdateGymDto updateGymDto)
+        public async Task<IActionResult> Update(Guid id, [FromBody] UpdateDetailsGymDto updateGymDto)
         {
             var result = await _gymService.Update(new GymId(id), updateGymDto);
 
