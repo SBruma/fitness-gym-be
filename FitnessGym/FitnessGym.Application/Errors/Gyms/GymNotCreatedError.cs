@@ -1,14 +1,10 @@
-﻿using FluentResults;
-using System.Net;
-
-namespace FitnessGym.Application.Errors.Gyms
+﻿namespace FitnessGym.Application.Errors.Gyms
 {
-    public class GymNotCreatedError : Error
+    public class GymNotCreatedError : NotCreatedError
     {
-        public GymNotCreatedError()
-            : base($"Gym couldn't be created")
+        public GymNotCreatedError() : base($"Gym couldn't be created")
         {
-            Metadata.Add("ErrorCode", HttpStatusCode.BadRequest);
+
         }
     }
 }

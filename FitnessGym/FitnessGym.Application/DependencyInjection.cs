@@ -10,6 +10,7 @@ namespace FitnessGym.Application
         public static IServiceCollection AddApplication(this IServiceCollection services)
         {
             services.AddTransient<IGymService, GymService>();
+            services.AddTransient<IEquipmentService, EquipmentService>();
             services.AddTransient<IMapper, Mapper>();
 
             return services;

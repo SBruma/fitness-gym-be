@@ -1,6 +1,8 @@
-﻿namespace FitnessGym.Infrastructure.Repositories.Interfaces.Gyms
+﻿using FitnessGym.Domain.Entities.Gyms;
+
+namespace FitnessGym.Infrastructure.Repositories.Interfaces.Gyms
 {
-    public interface IEquipmentRepository
+    public interface IEquipmentRepository : IGenericRepository<Equipment>
     {
     }
 }

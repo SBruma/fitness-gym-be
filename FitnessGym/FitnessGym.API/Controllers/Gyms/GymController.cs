@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace FitnessGym.API.Controllers.Gyms
 {
     [Route("api/[controller]")]
+    [ApiController]
     public class GymController : ControllerBase
     {
         private readonly IGymService _gymService;

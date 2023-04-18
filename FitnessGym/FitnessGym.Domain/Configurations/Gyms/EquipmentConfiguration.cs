@@ -14,7 +14,8 @@ namespace FitnessGym.Domain.Configurations.Gyms
 
             builder.Property(equipment => equipment.Id)
                 .HasConversion(equipmentId => equipmentId.Value,
-                                value => new EquipmentId(value));
+                                value => new EquipmentId(value))
+                .HasDefaultValueSql("uuid_generate_v4()");
 
             builder.Property(equipment => equipment.GymId)
                 .HasConversion(gymId => gymId.Value,
@@ -26,7 +27,8 @@ namespace FitnessGym.Domain.Configurations.Gyms
 
             builder.HasOne(equipment => equipment.Floor)
                 .WithMany(floor => floor.Equipments)
-                .HasForeignKey(equipment => new { equipment.GymId, equipment.Level });
+                .HasForeignKey(equipment => new { equipment.GymId, equipment.Level })
+                .IsRequired(false);
 
             builder.Property(equipment => equipment.Name)
                 .HasMaxLength(75)
@@ -44,7 +46,6 @@ namespace FitnessGym.Domain.Configurations.Gyms
                 .HasMaxLength(250)
                 .IsRequired(false);
 
-            builder.Property(equipment => equipment.Level).IsRequired();
             builder.Property(equipment => equipment.Category).IsRequired();
             builder.Property(equipment => equipment.Status).IsRequired();
             builder.Property(equipment => equipment.PurchaseDate).IsRequired();

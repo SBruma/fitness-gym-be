@@ -8,12 +8,13 @@ using System.Globalization;
 var builder = WebApplication.CreateBuilder(args);
 
 var supportedCultures = new[] { new CultureInfo("en"), new CultureInfo("ro") };
-
+builder.Services.AddDateOnlyTimeOnlyStringConverters();
 builder.Services.AddControllers().AddMvcLocalization();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(option =>
 {
     option.OperationFilter<LanguageHeaderParameterFilter>();
+    option.UseDateOnlyTimeOnlyStringConverters();
 });
 
 builder.Host.UseSerilog((context, configuration) =>

@@ -6,5 +6,6 @@ namespace FitnessGym.Application.Mappers
     {
         GymMapper GymMapper { get; }
         FloorMapper FloorMapper { get; }
+        EquipmentMapper EquipmentMapper { get; }
     }
 }

@@ -6,11 +6,13 @@ namespace FitnessGym.Application.Mappers
     {
         public FloorMapper FloorMapper { get; }
         public GymMapper GymMapper { get; }
+        public EquipmentMapper EquipmentMapper { get; }
 
         public Mapper()
         {
             FloorMapper = new FloorMapper();
             GymMapper = new GymMapper(FloorMapper);
+            EquipmentMapper = new EquipmentMapper();
         }
     }
 }

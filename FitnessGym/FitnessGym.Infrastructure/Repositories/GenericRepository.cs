@@ -1,7 +1,9 @@
 ﻿using FitnessGym.Domain.Entities.Interfaces;
+using FitnessGym.Domain.Filters;
 using FitnessGym.Infrastructure.Data;
 using FitnessGym.Infrastructure.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using System.Linq.Expressions;
 
 namespace FitnessGym.Infrastructure.Repositories
 {
@@ -41,6 +43,23 @@ namespace FitnessGym.Infrastructure.Repositories
         public virtual async Task<T?> GetById(object entityId, CancellationToken cancellationToken = default)
         {
             return await _dbSet.FindAsync(new object[] { entityId }, cancellationToken);
+        }
+
+        public async Task<List<T>> Get(Expression<Func<T, bool>> filter, PaginationFilter paginationFilter)
+        {
+            var query = _dbSet.AsNoTracking().AsQueryable();
+
+            if (filter is not null)
+            {
+                query = query.Where(filter);
+            }
+
+            if (paginationFilter is not null)
+            {
+                query = query.Skip(paginationFilter.Offset).Take(paginationFilter.PageSize);
+            }
+
+            return await query.ToListAsync();
         }
     }
 }

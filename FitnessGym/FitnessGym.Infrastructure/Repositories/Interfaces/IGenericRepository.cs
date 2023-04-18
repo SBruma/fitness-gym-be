@@ -1,4 +1,6 @@
 ﻿using FitnessGym.Domain.Entities.Interfaces;
+using FitnessGym.Domain.Filters;
+using System.Linq.Expressions;
 
 namespace FitnessGym.Infrastructure.Repositories.Interfaces
 {
@@ -9,5 +11,6 @@ namespace FitnessGym.Infrastructure.Repositories.Interfaces
         void Update(T entityToUpdate);
         void Delete(T entityToDelete);
         Task<T?> GetById(object entityId, CancellationToken cancellationToken = default);
+        Task<List<T>> Get(Expression<Func<T, bool>> filter, PaginationFilter paginationFilter);
     }
 }
