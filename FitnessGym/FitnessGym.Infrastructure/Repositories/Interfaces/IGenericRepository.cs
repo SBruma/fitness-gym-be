@@ -1,16 +1,17 @@
 ﻿using FitnessGym.Domain.Entities.Interfaces;
 using FitnessGym.Domain.Filters;
+using FluentResults;
 using System.Linq.Expressions;
 
 namespace FitnessGym.Infrastructure.Repositories.Interfaces
 {
     public interface IGenericRepository<T> where T : class, IAuditableEntity
     {
-        Task Add(T entity, CancellationToken cancellationToken = default);
-        Task AddRange(IEnumerable<T> entities, CancellationToken cancellationToken = default);
-        void Update(T entityToUpdate);
-        void Delete(T entityToDelete);
-        Task<T?> GetById(object entityId, CancellationToken cancellationToken = default);
-        Task<List<T>> Get(Expression<Func<T, bool>> filter, PaginationFilter paginationFilter);
+        Task<Result> Add(T entity, CancellationToken cancellationToken = default);
+        Task<Result> AddRange(IEnumerable<T> entities, CancellationToken cancellationToken = default);
+        Result Update(T entityToUpdate);
+        Result Delete(T entityToDelete);
+        Task<Result<T>> GetById(object entityId, CancellationToken cancellationToken = default);
+        Task<List<T>> Get(Expression<Func<T, bool>> filter, PaginationFilter paginationFilter);// de modificat
     }
 }
