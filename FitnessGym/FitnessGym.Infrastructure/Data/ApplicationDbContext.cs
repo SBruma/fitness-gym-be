@@ -1,4 +1,6 @@
-﻿using FitnessGym.Domain.Configurations.Gyms;
+﻿using Duende.IdentityServer.EntityFramework.Entities;
+using Duende.IdentityServer.EntityFramework.Extensions;
+using FitnessGym.Domain.Configurations.Gyms;
 using FitnessGym.Domain.Configurations.Members;
 using FitnessGym.Domain.Entities.Gyms;
 using FitnessGym.Domain.Entities.Identity;
@@ -11,6 +13,8 @@ namespace FitnessGym.Infrastructure.Data
 {
     public class ApplicationDbContext : IdentityDbContext<ApplicationUser, IdentityRole<Guid>, Guid>
     {
+        public DbSet<PersistedGrant> PersistedGrants { get; set; }
+
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
         {
         }
