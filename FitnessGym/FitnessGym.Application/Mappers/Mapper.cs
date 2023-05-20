@@ -1,4 +1,5 @@
 ﻿using FitnessGym.Application.Mappers.Gyms;
+using FitnessGym.Application.Mappers.Identity;
 
 namespace FitnessGym.Application.Mappers
 {
@@ -8,11 +9,14 @@ namespace FitnessGym.Application.Mappers
         public GymMapper GymMapper { get; }
         public EquipmentMapper EquipmentMapper { get; }
 
+        public IdentityMapper IdentityMapper { get; }
+
         public Mapper()
         {
             FloorMapper = new FloorMapper();
             GymMapper = new GymMapper(FloorMapper);
             EquipmentMapper = new EquipmentMapper();
+            IdentityMapper = new IdentityMapper();
         }
     }
 }

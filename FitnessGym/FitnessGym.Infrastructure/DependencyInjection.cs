@@ -1,4 +1,5 @@
 ﻿using FitnessGym.Domain.Entities.Identity;
+using FitnessGym.Infrastructure.Configs;
 using FitnessGym.Infrastructure.Data;
 using FitnessGym.Infrastructure.Data.Interceptors;
 using FitnessGym.Infrastructure.Data.Interfaces;
@@ -53,7 +54,11 @@ namespace FitnessGym.Infrastructure
                     options.EnableTokenCleanup = true;
                     options.RemoveConsumedTokens = true;
                 })
-                .AddAspNetIdentity<ApplicationUser>();
+                .AddAspNetIdentity<ApplicationUser>()
+                .AddInMemoryClients(IdentityConfig.Clients(configuration))  // Configure clients
+                .AddInMemoryIdentityResources(IdentityConfig.IdentityResources)  // Configure identity resources
+                .AddInMemoryApiScopes(IdentityConfig.ApiScopes)  // Configure API scopes
+                .AddInMemoryApiResources(IdentityConfig.ApiResources);  // Configure API resources;
 
             services.AddScoped<IGymRepository, GymRepository>();
             services.AddScoped<IFloorRepository, FloorRepository>();

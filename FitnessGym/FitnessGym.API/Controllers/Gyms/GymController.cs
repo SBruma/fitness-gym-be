@@ -1,6 +1,7 @@
 ﻿using FitnessGym.Application.Dtos.Gyms;
 using FitnessGym.Application.Services.Interfaces.Gyms;
 using FitnessGym.Domain.Entities.Gyms;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FitnessGym.API.Controllers.Gyms
@@ -16,8 +17,7 @@ namespace FitnessGym.API.Controllers.Gyms
             _gymService = gymService;
         }
 
-        // GET: api/<GymController>
-        [HttpGet]
+        [HttpGet, Authorize]
         [ProducesResponseType(typeof(List<GymDto>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         public async Task<IActionResult> Get()

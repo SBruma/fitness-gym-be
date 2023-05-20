@@ -1,3 +1,4 @@
+using FitnessGym.API.Configs;
 using FitnessGym.API.Headers;
 using FitnessGym.Application;
 using FitnessGym.Infrastructure;
@@ -17,6 +18,9 @@ builder.Services.AddSwaggerGen(option =>
     option.UseDateOnlyTimeOnlyStringConverters();
 });
 
+builder.Services.ConfigureSwaggerOptions();
+builder.Services.ConfigureAppOptions(builder.Configuration);
+
 builder.Host.UseSerilog((context, configuration) =>
 {
     configuration.ReadFrom.Configuration(context.Configuration);
@@ -25,9 +29,9 @@ builder.Host.UseSerilog((context, configuration) =>
 });
 
 builder.Services.AddLocalization(options => options.ResourcesPath = "Resources");
-
 builder.Services.AddInfrastructure(builder.Configuration);
 builder.Services.AddApplication();
+builder.Services.ConfigureAuthenticationOptions(builder.Configuration);
 
 var app = builder.Build();
 
@@ -50,8 +54,10 @@ app.UseRequestLocalization(new RequestLocalizationOptions
     SupportedUICultures = supportedCultures
 });
 
+app.UseAuthentication();
 app.UseAuthorization();
 
+app.UseIdentityServer();
 app.MapControllers();
 
 app.Run();
