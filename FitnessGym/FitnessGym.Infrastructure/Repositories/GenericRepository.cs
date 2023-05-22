@@ -81,19 +81,12 @@ namespace FitnessGym.Infrastructure.Repositories
             return entity is not null ? Result.Ok() : Result.Fail(new NotFoundError(typeof(T)));
         }
 
-        public async Task<List<T>> Get(Expression<Func<T, bool>> filter, PaginationFilter paginationFilter)
+        protected async Task<List<T>> Get(Expression<Func<T, bool>> filter, PaginationFilter paginationFilter, Expression<Func<T, object>> orderBy = null)
         {
             var query = _dbSet.AsNoTracking().AsQueryable();
-
-            if (filter is not null)
-            {
-                query = query.Where(filter);
-            }
-
-            if (paginationFilter is not null)
-            {
-                query = query.Skip(paginationFilter.Offset).Take(paginationFilter.PageSize);
-            }
+            query = filter != null ? query.Where(filter) : query;
+            query = orderBy != null ? query.OrderBy(orderBy) : query;
+            query = paginationFilter != null ? query.Skip(paginationFilter.Offset).Take(paginationFilter.PageSize) : query;
 
             return await query.ToListAsync();
         }

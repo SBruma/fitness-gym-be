@@ -12,6 +12,5 @@ namespace FitnessGym.Infrastructure.Repositories.Interfaces
         Result Update(T entityToUpdate);
         Result Delete(T entityToDelete);
         Task<Result<T>> GetById(object entityId, CancellationToken cancellationToken = default);
-        Task<List<T>> Get(Expression<Func<T, bool>> filter, PaginationFilter paginationFilter);// de modificat
     }
 }

@@ -17,7 +17,7 @@ namespace FitnessGym.API.Controllers.Gyms
             _gymService = gymService;
         }
 
-        [HttpGet, Authorize]
+        [HttpGet]
         [ProducesResponseType(typeof(List<GymDto>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         public async Task<IActionResult> Get()

@@ -3,6 +3,7 @@ using FitnessGym.Application.Dtos.Gyms.Create;
 using FitnessGym.Application.Errors.Gyms;
 using FitnessGym.Application.Mappers;
 using FitnessGym.Application.Services.Interfaces.Gyms;
+using FitnessGym.Domain.Filters;
 using FitnessGym.Infrastructure.Data.Interfaces;
 using FluentResults;
 
@@ -27,6 +28,13 @@ namespace FitnessGym.Application.Services.Gyms
             var result = Result.OkIf(!equipment.Id.Equals(Guid.Empty), new EquipmentNotCreatedError());
 
             return result.IsSuccess ? Result.Ok(_mapper.EquipmentMapper.MapEquipmentToEquipmentDto(equipment)) : result;
+        }
+
+        public async Task<Result<List<EquipmentDto>>> Get(EquipmentFilter equipmentFilter, PaginationFilter paginationFilter)
+        {
+            var equipments = await _unitOfWork.EquipmentRepository.GetFiltered(equipmentFilter, paginationFilter);
+
+            return Result.Ok(_mapper.EquipmentMapper.EquipmentsToEquipmentsDto(equipments));
         }
     }
 }

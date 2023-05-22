@@ -13,6 +13,6 @@ namespace FitnessGym.Application.Services.Interfaces.Gyms
         //Task<Result<GymDto>> Update(EquipmentId equipmentId, UpdateDetailsGymDto updateGymDto);
         //Task<Result> Delete(EquipmentId equipmentId);
         //Task<Result<ExpandedEquipmentDto>> GetById(EquipmentId equipmentId);
-        //Task<Result<List<EquipmentDto>>> Get(EquipmentFilter equipmentFilter);
+        Task<Result<List<EquipmentDto>>> Get(EquipmentFilter equipmentFilter, PaginationFilter paginationFilter);
     }
 }
