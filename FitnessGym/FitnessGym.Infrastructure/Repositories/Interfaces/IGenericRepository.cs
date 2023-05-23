@@ -1,7 +1,5 @@
 ﻿using FitnessGym.Domain.Entities.Interfaces;
-using FitnessGym.Domain.Filters;
 using FluentResults;
-using System.Linq.Expressions;
 
 namespace FitnessGym.Infrastructure.Repositories.Interfaces
 {

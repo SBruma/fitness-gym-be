@@ -1,4 +1,5 @@
 ﻿using FitnessGym.Application.Dtos.Gyms;
+using FitnessGym.Application.Dtos.Gyms.Update;
 using FitnessGym.Application.Errors.Gyms;
 using FitnessGym.Application.Mappers;
 using FitnessGym.Application.Services.Interfaces.Gyms;

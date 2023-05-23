@@ -5,7 +5,7 @@ namespace FitnessGym.Application.Dtos.Gyms.Entities
 {
     public abstract class EquipmentEntityDto
     {
-        public virtual EquipmentId Id { get; set; }
+        public virtual Guid Id { get; set; }
         public string Name { get; set; }
         public string ModelNumber { get; set; }
         public string SerialNumber { get; set; }
@@ -15,7 +15,7 @@ namespace FitnessGym.Application.Dtos.Gyms.Entities
         public FloorLocation FloorLocation { get; set; }
         public EquipmentCategory Category { get; set; }
         public EquipmentStatus Status { get; set; }
-        public GymId? GymId { get; set; }
+        public Guid GymId { get; set; }
         public int? Floor { get; set; }
     }
 }

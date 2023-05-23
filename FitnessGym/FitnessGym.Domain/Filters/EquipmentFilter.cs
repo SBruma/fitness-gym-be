@@ -9,6 +9,8 @@ namespace FitnessGym.Domain.Filters
     {
         public EquipmentCategory? Category { get; set; } = null;
         public EquipmentStatus? Status { get; set; } = null;
+        public DateOnly? PurchaseDate { get; set; } = null;
+        public DateOnly? WarrantyExpirationDate { get; set; } = null;
 
         public Expression<Func<Equipment, bool>> GetQuery()
         {
@@ -16,12 +18,22 @@ namespace FitnessGym.Domain.Filters
 
             if (Category != null)
             {
-                query = query.And(equipment => equipment.Category == Category);
+                query = query.And(equipment => equipment.Category == Category.Value);
             }
 
             if (Status != null)
             {
-                query = query.And(equipment => equipment.Status == Status);
+                query = query.And(equipment => equipment.Status == Status.Value);
+            }
+
+            if (PurchaseDate != null)
+            {
+                query = query.And(equipment => equipment.PurchaseDate == PurchaseDate.Value);
+            }
+
+            if (WarrantyExpirationDate != null)
+            {
+                query = query.And(equipment => equipment.WarrantyExpirationDate == WarrantyExpirationDate.Value);
             }
 
             return query;

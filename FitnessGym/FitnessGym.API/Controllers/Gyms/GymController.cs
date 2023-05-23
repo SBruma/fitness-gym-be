@@ -1,4 +1,5 @@
 ﻿using FitnessGym.Application.Dtos.Gyms;
+using FitnessGym.Application.Dtos.Gyms.Update;
 using FitnessGym.Application.Services.Interfaces.Gyms;
 using FitnessGym.Domain.Entities.Gyms;
 using Microsoft.AspNetCore.Authorization;

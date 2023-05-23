@@ -78,12 +78,13 @@ namespace FitnessGym.Infrastructure.Repositories
         {
             var entity = await _dbSet.FindAsync(new object[] { entityId }, cancellationToken);
 
-            return entity is not null ? Result.Ok() : Result.Fail(new NotFoundError(typeof(T)));
+            return entity is not null ? Result.Ok(entity) : Result.Fail(new NotFoundError(typeof(T)));
         }
 
         protected async Task<List<T>> Get(Expression<Func<T, bool>> filter, PaginationFilter paginationFilter, Expression<Func<T, object>> orderBy = null)
         {
             var query = _dbSet.AsNoTracking().AsQueryable();
+            query = query.Where(entity => entity.IsDeleted == false);
             query = filter != null ? query.Where(filter) : query;
             query = orderBy != null ? query.OrderBy(orderBy) : query;
             query = paginationFilter != null ? query.Skip(paginationFilter.Offset).Take(paginationFilter.PageSize) : query;
