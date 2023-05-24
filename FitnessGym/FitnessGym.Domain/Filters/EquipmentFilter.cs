@@ -11,29 +11,36 @@ namespace FitnessGym.Domain.Filters
         public EquipmentStatus? Status { get; set; } = null;
         public DateOnly? PurchaseDate { get; set; } = null;
         public DateOnly? WarrantyExpirationDate { get; set; } = null;
+        public Guid? GymId { get; set; } = null;
 
         public Expression<Func<Equipment, bool>> GetQuery()
         {
             Expression<Func<Equipment, bool>> query = equipments => true;
 
-            if (Category != null)
+            if (Category is not null)
             {
-                query = query.And(equipment => equipment.Category == Category.Value);
+                query = query.And(equipment => equipment.Category == Category);
             }
 
-            if (Status != null)
+            if (Status is not null)
             {
-                query = query.And(equipment => equipment.Status == Status.Value);
+                query = query.And(equipment => equipment.Status == Status);
             }
 
-            if (PurchaseDate != null)
+            if (PurchaseDate is not null)
             {
-                query = query.And(equipment => equipment.PurchaseDate == PurchaseDate.Value);
+                query = query.And(equipment => equipment.PurchaseDate == PurchaseDate);
             }
 
-            if (WarrantyExpirationDate != null)
+            if (WarrantyExpirationDate is not null)
             {
-                query = query.And(equipment => equipment.WarrantyExpirationDate == WarrantyExpirationDate.Value);
+                query = query.And(equipment => equipment.WarrantyExpirationDate == WarrantyExpirationDate);
+            }
+
+            if (GymId is not null)
+            {
+                var gymId = new GymId(GymId.Value);
+                query = query.And(equipment => equipment.GymId == gymId);
             }
 
             return query;

@@ -1,12 +1,13 @@
 ﻿using FitnessGym.Infrastructure.Repositories.Interfaces.Gyms;
 using FitnessGym.Infrastructure.Repositories.Interfaces.Members;
+using FluentResults;
 
 namespace FitnessGym.Infrastructure.Data.Interfaces
 {
     public interface IUnitOfWork : IDisposable
     {
         IGymRepository GymRepository { get; }
-        IFloorRepository FloorRepository { get;  }
+        IFloorRepository FloorRepository { get; }
         IEquipmentRepository EquipmentRepository { get; }
         IMaintenanceHistoryRepository MaintenanceHistoryRepository { get; }
         IMemberRepository MemberRepository { get; }
@@ -14,7 +15,7 @@ namespace FitnessGym.Infrastructure.Data.Interfaces
         IStaffBookingRepository StaffBookingRepository { get; }
         IStaffScheduleRepository StaffScheduleRepository { get; }
         IMembershipRepository MembershipRepository { get; }
-        Task SaveChangesAsync(CancellationToken cancellationToken = default);
+        Task<Result> SaveChangesAsync(CancellationToken cancellationToken = default);
         Task RollbackAsync();
     }
 }

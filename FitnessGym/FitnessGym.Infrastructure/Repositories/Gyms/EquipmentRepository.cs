@@ -2,6 +2,7 @@
 using FitnessGym.Domain.Filters;
 using FitnessGym.Infrastructure.Data;
 using FitnessGym.Infrastructure.Repositories.Interfaces.Gyms;
+using Microsoft.EntityFrameworkCore;
 
 namespace FitnessGym.Infrastructure.Repositories.Gyms
 {
@@ -13,7 +14,7 @@ namespace FitnessGym.Infrastructure.Repositories.Gyms
 
         public async Task<List<Equipment>> GetFiltered(EquipmentFilter equipmentFilter, PaginationFilter paginationFilter)
         {
-            return await Get(equipmentFilter.GetQuery(), paginationFilter);
+            return await Get(equipmentFilter.GetQuery(), paginationFilter).ToListAsync();
         }
     }
 }

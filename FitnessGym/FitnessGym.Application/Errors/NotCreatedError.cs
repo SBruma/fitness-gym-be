@@ -9,5 +9,10 @@ namespace FitnessGym.Application.Errors
         {
             Metadata.Add("ErrorCode", HttpStatusCode.BadRequest);
         }
+
+        public NotCreatedError(Type entity) : base($"{entity.Name} couldn't be created")
+        {
+            Metadata.Add("ErrorCode", HttpStatusCode.BadRequest);
+        }
     }
 }

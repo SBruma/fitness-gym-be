@@ -16,7 +16,7 @@
         public PaginationFilter(int pageNumber, int pageSize)
         {
             PageNumber = pageNumber < 1 ? 1 : pageNumber;
-            PageSize = pageSize < 20 ? 20 : pageSize;
+            PageSize = pageSize < 10 ? 10 : pageSize;
             Offset = (PageNumber - 1) * PageSize;
         }
     }

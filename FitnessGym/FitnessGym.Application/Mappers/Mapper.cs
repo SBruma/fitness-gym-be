@@ -8,8 +8,8 @@ namespace FitnessGym.Application.Mappers
         public FloorMapper FloorMapper { get; }
         public GymMapper GymMapper { get; }
         public EquipmentMapper EquipmentMapper { get; }
-
         public IdentityMapper IdentityMapper { get; }
+        public EquipmentMaintenanceMapper EquipmentMaintenanceMapper { get; }
 
         public Mapper()
         {
@@ -17,6 +17,7 @@ namespace FitnessGym.Application.Mappers
             GymMapper = new GymMapper(FloorMapper);
             EquipmentMapper = new EquipmentMapper();
             IdentityMapper = new IdentityMapper();
+            EquipmentMaintenanceMapper = new EquipmentMaintenanceMapper();
         }
     }
 }

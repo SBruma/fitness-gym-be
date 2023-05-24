@@ -74,14 +74,14 @@ namespace FitnessGym.Infrastructure.Repositories
             }
         }
 
-        public virtual async Task<Result<T?>> GetById(object entityId, CancellationToken cancellationToken = default)
+        public virtual async Task<Result<T>> GetById(object entityId, CancellationToken cancellationToken = default)
         {
             var entity = await _dbSet.FindAsync(new object[] { entityId }, cancellationToken);
 
             return entity is not null ? Result.Ok(entity) : Result.Fail(new NotFoundError(typeof(T)));
         }
 
-        protected async Task<List<T>> Get(Expression<Func<T, bool>> filter, PaginationFilter paginationFilter, Expression<Func<T, object>> orderBy = null)
+        protected IQueryable<T> Get(Expression<Func<T, bool>> filter, PaginationFilter paginationFilter, Expression<Func<T, object>> orderBy = null)
         {
             var query = _dbSet.AsNoTracking().AsQueryable();
             query = query.Where(entity => entity.IsDeleted == false);
@@ -89,7 +89,7 @@ namespace FitnessGym.Infrastructure.Repositories
             query = orderBy != null ? query.OrderBy(orderBy) : query;
             query = paginationFilter != null ? query.Skip(paginationFilter.Offset).Take(paginationFilter.PageSize) : query;
 
-            return await query.ToListAsync();
+            return query;
         }
     }
 }

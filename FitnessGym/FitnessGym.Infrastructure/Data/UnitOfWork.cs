@@ -1,6 +1,7 @@
 ﻿using FitnessGym.Infrastructure.Data.Interfaces;
 using FitnessGym.Infrastructure.Repositories.Interfaces.Gyms;
 using FitnessGym.Infrastructure.Repositories.Interfaces.Members;
+using FluentResults;
 
 namespace FitnessGym.Infrastructure.Data
 {
@@ -40,15 +41,22 @@ namespace FitnessGym.Infrastructure.Data
             MembershipRepository = membershipRepository;
         }
 
-       
         public async Task RollbackAsync()
         {
             await _context.DisposeAsync();
         }
 
-        public Task SaveChangesAsync(CancellationToken cancellationToken = default)
+        public async Task<Result> SaveChangesAsync(CancellationToken cancellationToken = default)
         {
-            return _context.SaveChangesAsync(cancellationToken);
+            try
+            {
+                await _context.SaveChangesAsync(cancellationToken);
+                return Result.Ok();
+            }
+            catch (Exception e)
+            {
+                return Result.Fail(new Error(e.Message + e.InnerException));
+            }
         }
 
         public void Dispose()

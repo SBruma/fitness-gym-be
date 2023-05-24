@@ -14,6 +14,7 @@ namespace FitnessGym.Application
             services.AddTransient<IGymService, GymService>();
             services.AddTransient<IEquipmentService, EquipmentService>();
             services.AddTransient<IIdentityService, IdentityService>();
+            services.AddTransient<IEquipmentMaintenanceService, EquipmentMaintenanceService>();
             services.AddTransient<IMapper, Mapper>();
 
             return services;

@@ -9,5 +9,10 @@ namespace FitnessGym.Application.Errors
         {
             Metadata.Add("ErrorCode", HttpStatusCode.NotFound);
         }
+
+        public NotFoundError(Type entity) : base($"{entity.Name} couldn't be found")
+        {
+            Metadata.Add("ErrorCode", HttpStatusCode.NotFound);
+        }
     }
 }

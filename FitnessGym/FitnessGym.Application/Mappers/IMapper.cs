@@ -9,5 +9,6 @@ namespace FitnessGym.Application.Mappers
         FloorMapper FloorMapper { get; }
         EquipmentMapper EquipmentMapper { get; }
         IdentityMapper IdentityMapper { get; }
+        EquipmentMaintenanceMapper EquipmentMaintenanceMapper { get; }
     }
 }
