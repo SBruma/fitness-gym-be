@@ -45,14 +45,15 @@ namespace FitnessGym.API.Controllers.Identity
         {
             var flow = GetGoogleFlow();
             var googleCallbackUrl = Url.Action(nameof(GoogleCallback), null, null, Request.Scheme, Request.Host.Value);
-            var tokenResponse = await flow.ExchangeCodeForTokenAsync("holder", code, googleCallbackUrl, cancellationToken);
+            var tokenResponse = await flow.ExchangeCodeForTokenAsync("", code, googleCallbackUrl, cancellationToken);
             var googleToken = new GoogleTokenDto
             {
                 AccessToken = tokenResponse.AccessToken,
                 JwtToken = tokenResponse.IdToken,
                 RefreshToken = tokenResponse.RefreshToken
             };
-
+            // logica back end create cont
+            //use datastore
             return Ok();
         }
 
