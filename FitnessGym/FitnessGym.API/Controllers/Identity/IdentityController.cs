@@ -43,27 +43,48 @@ namespace FitnessGym.API.Controllers.Identity
         [Route("signin-google")]
         public async Task<IActionResult> GoogleCallback(string code, CancellationToken cancellationToken)
         {
-            var flow = new GoogleAuthorizationCodeFlow(new GoogleAuthorizationCodeFlow.Initializer
-            {
-                ClientSecrets = new ClientSecrets
-                {
-                    ClientId = _appOptions.ClientId,
-                    ClientSecret = _appOptions.ClientSecret
-                }
-            });
-
+            var flow = GetGoogleFlow();
             var googleCallbackUrl = Url.Action(nameof(GoogleCallback), null, null, Request.Scheme, Request.Host.Value);
             var tokenResponse = await flow.ExchangeCodeForTokenAsync("holder", code, googleCallbackUrl, cancellationToken);
+            var googleToken = new GoogleTokenDto
+            {
+                AccessToken = tokenResponse.AccessToken,
+                JwtToken = tokenResponse.IdToken,
+                RefreshToken = tokenResponse.RefreshToken
+            };
 
             return Ok();
+        }
+
+        [HttpGet]
+        [Route("google-refresh-token")]
+        public async Task<IActionResult> RefreshAccessToken(string refreshToken, CancellationToken cancellationToken)
+        {
+            var flow = GetGoogleFlow();
+            var tokenResponse = await flow.RefreshTokenAsync("", refreshToken, cancellationToken);
+            var googleToken = new GoogleTokenDto
+            {
+                AccessToken = tokenResponse.AccessToken,
+                JwtToken = tokenResponse.IdToken,
+                RefreshToken = tokenResponse.RefreshToken
+            };
+
+            return Ok(googleToken);
         }
 
         [HttpGet("google-redirect")]
         public IActionResult RedirectToGoogleAuth()
         {
             var googleCallbackUrl = Url.Action(nameof(GoogleCallback), null, null, Request.Scheme, Request.Host.Value);
+            var flow = GetGoogleFlow();
+            var authUrl = flow.CreateAuthorizationCodeRequest(googleCallbackUrl).Build().AbsoluteUri;
 
-            var flow = new GoogleAuthorizationCodeFlow(new GoogleAuthorizationCodeFlow.Initializer
+            return Redirect(authUrl);
+        }
+
+        private GoogleAuthorizationCodeFlow GetGoogleFlow()
+        {
+            return new GoogleAuthorizationCodeFlow(new GoogleAuthorizationCodeFlow.Initializer
             {
                 ClientSecrets = new ClientSecrets
                 {
@@ -77,11 +98,6 @@ namespace FitnessGym.API.Controllers.Identity
                     "openid",
                 }
             });
-
-            var authUrl = flow.CreateAuthorizationCodeRequest(googleCallbackUrl).Build().AbsoluteUri;
-
-            return Redirect(authUrl);
         }
-
     }
 }
