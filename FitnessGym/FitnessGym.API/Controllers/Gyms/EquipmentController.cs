@@ -36,7 +36,7 @@ namespace FitnessGym.API.Controllers.Gyms
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         public async Task<IActionResult> Get([FromQuery] EquipmentFilter equipmentFilter, [FromQuery] PaginationQueryFilter paginationFilter)
         {
-            var result = await _equipmentService.Get(equipmentFilter, new PaginationFilter(paginationFilter.PageNumber, paginationFilter.PageSize));
+            var result = await _equipmentService.GetFiltered(equipmentFilter, new PaginationFilter(paginationFilter.PageNumber, paginationFilter.PageSize));
 
             return result.IsSuccess ? Ok(result.Value) : NotFound(result.Reasons);
         }

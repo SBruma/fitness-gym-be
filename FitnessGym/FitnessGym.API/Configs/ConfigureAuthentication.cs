@@ -29,6 +29,12 @@ namespace FitnessGym.API.Configs
                         ClockSkew = TimeSpan.Zero,
                         ValidAlgorithms = new List<string> { SecurityAlgorithms.HmacSha256 }
                     };
+                })
+                .AddGoogle(options =>
+                {
+                    options.ClientId = configuration["Google:ClientId"];
+                    options.ClientSecret = configuration["Google:ClientSecret"];
+                    options.ReturnUrlParameter = "identity/api/signin-google";
                 });
 
             return services;

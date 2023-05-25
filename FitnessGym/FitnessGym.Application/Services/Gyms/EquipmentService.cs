@@ -54,7 +54,7 @@ namespace FitnessGym.Application.Services.Gyms
             return deleteResult.IsSuccess ? Result.Ok() : Result.Fail(new DeleteError(equipmentId.Value));
         }
 
-        public async Task<Result<List<EquipmentDto>>> Get(EquipmentFilter equipmentFilter, PaginationFilter paginationFilter)
+        public async Task<Result<List<EquipmentDto>>> GetFiltered(EquipmentFilter equipmentFilter, PaginationFilter paginationFilter)
         {
             var equipments = await _unitOfWork.EquipmentRepository.GetFiltered(equipmentFilter, paginationFilter);
 

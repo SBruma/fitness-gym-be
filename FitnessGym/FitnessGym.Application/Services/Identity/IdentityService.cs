@@ -1,10 +1,13 @@
-﻿using Duende.IdentityServer.ResponseHandling;
+﻿using Duende.IdentityServer.EntityFramework.Entities;
+using Duende.IdentityServer.ResponseHandling;
 using FitnessGym.Application.Dtos.Identity;
 using FitnessGym.Application.Mappers;
 using FitnessGym.Application.Options;
 using FitnessGym.Application.Services.Interfaces.Identity;
 using FitnessGym.Domain.Entities.Identity;
 using FluentResults;
+using Google.Apis.Auth.OAuth2;
+using Google.Apis.Auth.OAuth2.Flows;
 using IdentityModel;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
@@ -84,5 +87,36 @@ namespace FitnessGym.Application.Services.Identity
                 RefreshToken = refreshToken
             };
         }
+
+        //public async Task<Result<TokenResponse>> LoginGoogle(GoogleLoginDto googleLoginDto)
+        //{
+
+
+        //    //// Validate the access token
+        //    //var tokenValidationParameters = new TokenValidationParameters
+        //    //{
+        //    //    ValidateIssuer = false, // Customize as needed
+        //    //    ValidateAudience = false, // Customize as needed
+        //    //    ValidateLifetime = true,
+        //    //    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("YOUR_SECRET_KEY"))
+        //    //};
+
+        //    //var jwtHandler = new JwtSecurityTokenHandler();
+        //    //var claimsPrincipal = jwtHandler.ValidateToken(
+        //    //    tokenResponse.AccessToken,
+        //    //    tokenValidationParameters,
+        //    //    out _);
+
+        //    //// Retrieve user information from the claims
+        //    //var emailClaim = claimsPrincipal.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email);
+        //    //var nameClaim = claimsPrincipal.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Name);
+
+        //    //// Perform additional checks or operations with the user information
+        //    //// For example, check if the user exists in your system or create a new user account
+
+        //    //// Return a response or generate a JWT token as needed
+
+        //    return Result.Ok(tokenResponse);
+        //}
     }
 }

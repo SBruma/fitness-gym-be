@@ -14,6 +14,6 @@ namespace FitnessGym.Application.Services.Interfaces.Gyms
         Task<Result<ExpandedEquipmentDto>> Update(EquipmentId equipmentId, UpdateEquipmentDto updateEquipmentDto);
         Task<Result> Delete(EquipmentId equipmentId);
         Task<Result<ExpandedEquipmentDto>> GetById(EquipmentId equipmentId);
-        Task<Result<List<EquipmentDto>>> Get(EquipmentFilter equipmentFilter, PaginationFilter paginationFilter);
+        Task<Result<List<EquipmentDto>>> GetFiltered(EquipmentFilter equipmentFilter, PaginationFilter paginationFilter);
     }
 }

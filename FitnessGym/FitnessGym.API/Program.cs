@@ -57,7 +57,7 @@ app.UseRequestLocalization(new RequestLocalizationOptions
 app.UseAuthentication();
 app.UseAuthorization();
 
-app.UseIdentityServer();
+//app.UseIdentityServer();
 app.MapControllers();
 
 app.Run();

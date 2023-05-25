@@ -7,7 +7,7 @@ namespace FitnessGym.API.Configs
         public static IServiceCollection ConfigureAppOptions(this IServiceCollection services, IConfiguration configuration)
         {
             services.Configure<AppOptions>(configuration.GetSection("Jwt"));
-            services.Configure<AppOptions>(configuration.GetSection("DuendeClient"));
+            services.Configure<AppOptions>(configuration.GetSection("Google"));
 
             return services;
         }
