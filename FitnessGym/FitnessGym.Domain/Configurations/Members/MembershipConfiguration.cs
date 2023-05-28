@@ -22,7 +22,8 @@ namespace FitnessGym.Domain.Configurations.Members
 
             builder.Property(membership => membership.Id)
                 .HasConversion(membershipId => membershipId.Value,
-                                value => new MembershipId(value));
+                                value => new MembershipId(value))
+                .HasDefaultValueSql("uuid_generate_v4()");
 
             builder.Property(membership => membership.QRCode)
                 .HasConversion(membershipId => membershipId.Value,
@@ -36,7 +37,7 @@ namespace FitnessGym.Domain.Configurations.Members
                 .WithMany(gym => gym.Memberships)
                 .HasForeignKey(membership => membership.GymId);
 
-            //builder.Property(membership => membership.QRCode).IsRequired();
+            builder.Property(membership => membership.QRCode).IsRequired();
             builder.Property(membership => membership.RenewalDate).IsRequired();
             builder.Property(membership => membership.ExpirationDate).IsRequired();
 

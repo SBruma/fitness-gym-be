@@ -13,9 +13,11 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="BarCode" Version="2023.5.1" />
     <PackageReference Include="FluentResults" Version="3.15.2" />
     <PackageReference Include="Google.Apis.Auth" Version="1.60.0" />
     <PackageReference Include="Riok.Mapperly" Version="2.8.0" />
+    <PackageReference Include="System.Drawing.Common" Version="7.0.0" />
   </ItemGroup>
 
   <ItemGroup>

@@ -1,9 +1,7 @@
 ﻿using FitnessGym.API.Headers;
 using FitnessGym.Application.Dtos.Gyms;
 using FitnessGym.Application.Dtos.Gyms.Create;
-using FitnessGym.Application.Dtos.Gyms.Expanded;
 using FitnessGym.Application.Dtos.Gyms.Update;
-using FitnessGym.Application.Services.Gyms;
 using FitnessGym.Application.Services.Interfaces.Gyms;
 using FitnessGym.Domain.Entities.Gyms;
 using FitnessGym.Domain.Filters;

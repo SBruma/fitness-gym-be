@@ -5,12 +5,19 @@ using FitnessGym.Infrastructure;
 using Microsoft.AspNetCore.Localization;
 using Serilog;
 using System.Globalization;
+using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 
 var supportedCultures = new[] { new CultureInfo("en"), new CultureInfo("ro") };
 builder.Services.AddDateOnlyTimeOnlyStringConverters();
-builder.Services.AddControllers().AddMvcLocalization();
+builder.Services.AddControllers()
+                .AddMvcLocalization()
+                .AddJsonOptions(options =>
+                {
+                    options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+                }); ;
+
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(option =>
 {
