@@ -1,10 +1,10 @@
-﻿using FitnessGym.Domain.Entities.Members;
+﻿using FitnessGym.Domain.Entities.Gyms;
+using FitnessGym.Domain.Entities.Members;
 using FitnessGym.Infrastructure.Data;
 using FitnessGym.Infrastructure.Errors;
 using FitnessGym.Infrastructure.Repositories.Interfaces.Members;
 using FluentResults;
 using Microsoft.EntityFrameworkCore;
-using System.Runtime.InteropServices;
 
 namespace FitnessGym.Infrastructure.Repositories.Members
 {
@@ -14,10 +14,11 @@ namespace FitnessGym.Infrastructure.Repositories.Members
         {
         }
 
-        public async Task<Result<Membership>> GetActiveMembership(Guid userId)
+        public async Task<Result<Membership>> GetActiveMembership(GymId gymId, Guid userId)
         {
             var membership = await _dbSet.AsNoTracking()
-                                    .Where(membership => membership.MemberId == userId)
+                                    .Where(membership => membership.GymId == gymId
+                                                        && membership.MemberId == userId)
                                     .OrderByDescending(membership => membership.ExpirationDate)
                                     .FirstOrDefaultAsync();
 
@@ -30,10 +31,11 @@ namespace FitnessGym.Infrastructure.Repositories.Members
             return Result.Ok(membership);
         }
 
-        public async Task<Result<List<Membership>>> GetHistory(Guid userId)
+        public async Task<Result<List<Membership>>> GetHistory(GymId gymId, Guid userId)
         {
             var membershipHistory = await _dbSet.AsNoTracking()
-                                                .Where(membership => membership.MemberId == userId)
+                                                .Where(membership => membership.GymId == gymId
+                                                                    && membership.MemberId == userId)
                                                 .OrderByDescending(membership => membership.ExpirationDate)
                                                 .ToListAsync();
 

@@ -3,12 +3,14 @@ using FitnessGym.Application.Dtos.Gyms.Create;
 using FitnessGym.Application.Errors;
 using FitnessGym.Application.Mappers;
 using FitnessGym.Application.Services.Interfaces.Gyms;
+using FitnessGym.Domain.Entities.Gyms;
 using FitnessGym.Domain.Entities.Identity;
 using FitnessGym.Domain.Entities.Members;
 using FitnessGym.Infrastructure.Data.Interfaces;
 using FluentResults;
 using IronBarCode;
 using Microsoft.AspNetCore.Identity;
+using System;
 using System.Text.Json;
 using Result = FluentResults.Result;
 
@@ -38,7 +40,7 @@ namespace FitnessGym.Application.Services.Gyms
                 return Result.Fail(new NotFoundError(typeof(ApplicationUser)));
             }
 
-            var isMembershipActive = await _unitOfWork.MembershipRepository.GetActiveMembership(member.Id);
+            var isMembershipActive = await _unitOfWork.MembershipRepository.GetActiveMembership(new GymId(createMembershipDto.GymId), member.Id);
 
             if (isMembershipActive.IsSuccess)
             {
@@ -57,7 +59,7 @@ namespace FitnessGym.Application.Services.Gyms
                 return Result.Fail(new NotCreatedError(typeof(Membership)));
             }
 
-            membership.QRCode = new QRCode(GenerateQRCode(GenerateQrCodeText(membership, member.Email)));
+            membership.QRCode = new QRCode(GenerateQRCode(GenerateQrCodeText(membership, member)));
             _unitOfWork.MembershipRepository.Update(membership);
             var updateQRCodeResult = await _unitOfWork.SaveChangesAsync();
 
@@ -65,7 +67,7 @@ namespace FitnessGym.Application.Services.Gyms
                                                     Result.Fail(new NotCreatedError(typeof(Membership)));
         }
 
-        public async Task<Result<List<MembershipDto>>> GetHistory(string userEmail)
+        public async Task<Result<List<MembershipDto>>> GetHistory(GymId gymId, string userEmail)
         {
             var member = await _userManager.FindByEmailAsync(userEmail);
 
@@ -74,7 +76,7 @@ namespace FitnessGym.Application.Services.Gyms
                 return Result.Fail(new NotFoundError(typeof(ApplicationUser)));
             }
 
-            var membershipHistoryResult = await _unitOfWork.MembershipRepository.GetHistory(member.Id);
+            var membershipHistoryResult = await _unitOfWork.MembershipRepository.GetHistory(gymId, member.Id);
 
             if (membershipHistoryResult.IsFailed)
             {
@@ -92,7 +94,7 @@ namespace FitnessGym.Application.Services.Gyms
             return Result.Ok(_mapper.MembershipMapper.MapEntityToDto(membershipHistoryResult.Value));
         }
 
-        public async Task<Result<MembershipDto>> GetActiveMembership(string userEmail)
+        public async Task<Result<MembershipDto>> GetActiveMembership(GymId gymId, string userEmail)
         {
             var member = await _userManager.FindByEmailAsync(userEmail);
 
@@ -101,25 +103,24 @@ namespace FitnessGym.Application.Services.Gyms
                 return Result.Fail(new NotFoundError(typeof(ApplicationUser)));
             }
 
-            var getResult = await _unitOfWork.MembershipRepository.GetActiveMembership(member.Id);
+            var getResult = await _unitOfWork.MembershipRepository.GetActiveMembership(gymId, member.Id);
 
             return getResult.IsSuccess ? Result.Ok(_mapper.MembershipMapper.MapEntityToDto(getResult.Value)) :
                                             Result.Fail(new NotFoundError(typeof(Membership)));
         }
 
-        public byte[] GenerateQRCode(string text, int size = 500)
+        public byte[] GenerateQRCode(string text)
         {
-            // https://www.qrcode.com/en/about/version.html
-            var QRCode = QRCodeWriter.CreateQrCode(text, size, QRCodeWriter.QrErrorCorrectionLevel.Highest, 10);
+            var QRCode = QRCodeWriter.CreateQrCode(text, 200);
 
             return QRCode.ToWindowsBitmapBinaryData();
         }
 
-        private string GenerateQrCodeText(Membership membership, string userEmail)
+        private string GenerateQrCodeText(Membership membership, ApplicationUser user)
         {
             var QRCodeData = new QRMembershipData
             {
-                Email = userEmail,
+                Email = user.Email,
                 Id = membership.Id.Value
             };
 

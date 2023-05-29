@@ -11,6 +11,7 @@ namespace FitnessGym.Application.Mappers
         public IdentityMapper IdentityMapper { get; }
         public EquipmentMaintenanceMapper EquipmentMaintenanceMapper { get; }
         public MembershipMapper MembershipMapper { get; }
+        public StaffScheduleMapper StaffScheduleMapper { get; }
 
         public Mapper()
         {
@@ -20,6 +21,7 @@ namespace FitnessGym.Application.Mappers
             IdentityMapper = new IdentityMapper();
             EquipmentMaintenanceMapper = new EquipmentMaintenanceMapper();
             MembershipMapper = new MembershipMapper();
+            StaffScheduleMapper = new StaffScheduleMapper();
         }
     }
 }

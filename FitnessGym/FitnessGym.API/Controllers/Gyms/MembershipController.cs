@@ -1,6 +1,7 @@
 ﻿using FitnessGym.Application.Dtos.Gyms;
 using FitnessGym.Application.Dtos.Gyms.Create;
 using FitnessGym.Application.Services.Interfaces.Gyms;
+using FitnessGym.Domain.Entities.Gyms;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FitnessGym.API.Controllers.Gyms
@@ -17,7 +18,7 @@ namespace FitnessGym.API.Controllers.Gyms
         }
 
         [HttpPost]
-        [ProducesResponseType(typeof(EquipmentMaintenanceDto), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(MembershipDto), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         public async Task<IActionResult> Insert([FromBody] CreateMembershipDto request)
         {
@@ -26,22 +27,22 @@ namespace FitnessGym.API.Controllers.Gyms
             return result.IsSuccess ? Ok(result.Value) : BadRequest(result.Reasons);
         }
 
-        [HttpGet("last-active/{email}")]
-        [ProducesResponseType(typeof(List<EquipmentMaintenanceDto>), StatusCodes.Status200OK)]
+        [HttpGet("last-active/")]
+        [ProducesResponseType(typeof(List<MembershipDto>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
-        public async Task<IActionResult> GetActive(string email)
+        public async Task<IActionResult> GetActive([FromQuery] Guid gymId, [FromQuery] string email)
         {
-            var result = await _membershipService.GetActiveMembership(email);
+            var result = await _membershipService.GetActiveMembership(new GymId(gymId), email);
 
             return result.IsSuccess ? Ok(result.Value) : NotFound(result.Reasons);
         }
 
-        [HttpGet("history/{email}")]
-        [ProducesResponseType(typeof(List<EquipmentMaintenanceDto>), StatusCodes.Status200OK)]
+        [HttpGet("history")]
+        [ProducesResponseType(typeof(List<MembershipDto>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
-        public async Task<IActionResult> GetHistory(string email)
+        public async Task<IActionResult> GetHistory([FromQuery] Guid gymId, [FromQuery] string email)
         {
-            var result = await _membershipService.GetHistory(email);
+            var result = await _membershipService.GetHistory(new GymId(gymId), email);
 
             return result.IsSuccess ? Ok(result.Value) : NotFound(result.Reasons);
         }
