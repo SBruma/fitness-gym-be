@@ -1,4 +1,5 @@
 ﻿using FitnessGym.Application.Dtos.Gyms;
+using FitnessGym.Application.Dtos.Gyms.Update;
 using FitnessGym.Application.Errors;
 using FitnessGym.Application.Mappers;
 using FitnessGym.Application.Services.Interfaces.Gyms;
@@ -31,9 +32,20 @@ namespace FitnessGym.Application.Services.Gyms
 
         public async Task<Result<StaffScheduleDto>> GetStaffSchedule(Guid staffId)
         {
-            var staffSchedules = await _unitOfWork.StaffScheduleRepository.GetStaffSchedule(staffId);
+            var staffSchedulesResult = await _unitOfWork.StaffScheduleRepository.GetStaffSchedule(staffId);
 
-            return Result.Ok(_mapper.StaffScheduleMapper.MapEntitiesToDto(staffSchedules.Value));
+            return Result.Ok(_mapper.StaffScheduleMapper.MapEntitiesToDto(staffSchedulesResult.Value));
+        }
+
+        public async Task<Result> UpdateSchedule(Guid staffId, UpdateStaffSchedule dto)
+        {
+            var staffSchedulesResult = await _unitOfWork.StaffScheduleRepository.GetStaffSchedule(staffId);
+            _mapper.StaffScheduleMapper.MapUpdateEntities(dto, staffSchedulesResult.Value);
+
+            staffSchedulesResult.Value.ForEach(schedule => _unitOfWork.StaffScheduleRepository.Update(schedule));
+            var updateResult = await _unitOfWork.SaveChangesAsync();
+
+            return updateResult.IsSuccess ? Result.Ok() : Result.Fail(new UpdateError(typeof(StaffSchedule)));
         }
     }
 }

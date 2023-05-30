@@ -2,7 +2,7 @@
 {
     public abstract class StaffScheduleEntityDto
     {
-        public Guid MemberId { get; set; }
+        public virtual Guid MemberId { get; set; }
         public List<ScheduleDto> Schedules { get; set; }
     }
 }

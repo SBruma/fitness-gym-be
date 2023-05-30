@@ -47,7 +47,14 @@ app.UseSerilogRequestLogging();
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
-    app.UseSwaggerUI();
+    app.UseSwaggerUI(options =>
+    {
+        options.SwaggerEndpoint("/swagger/v1/swagger.json", "API V1");
+        options.OAuthClientId(builder.Configuration["Google:ClientId"]);
+        options.OAuthClientSecret(builder.Configuration["Google:ClientSecret"]);
+        //options.OAuthUsePkce();
+        options.OAuth2RedirectUrl("https://localhost:7270/api/Identity/signin-google");
+    });
 }
 
 app.UseHttpsRedirection();

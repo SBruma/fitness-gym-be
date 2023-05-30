@@ -1,4 +1,5 @@
 ﻿using FitnessGym.Application.Dtos.Gyms;
+using FitnessGym.Application.Dtos.Gyms.Update;
 using FitnessGym.Application.Services.Interfaces.Gyms;
 using Microsoft.AspNetCore.Mvc;
 
@@ -33,6 +34,16 @@ namespace FitnessGym.API.Controllers.Gyms
             var result = await _staffScheduleService.GetStaffSchedule(staffId);
 
             return result.IsSuccess ? Ok(result.Value) : NotFound();
+        }
+
+        [HttpPut]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> Update([FromQuery] Guid staffId, [FromBody] UpdateStaffSchedule updateStaffSchedule)
+        {
+            var result = await _staffScheduleService.UpdateSchedule(staffId, updateStaffSchedule);
+
+            return result.IsSuccess ? Ok() : NotFound();
         }
     }
 }

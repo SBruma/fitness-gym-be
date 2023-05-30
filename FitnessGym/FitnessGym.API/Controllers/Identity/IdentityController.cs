@@ -54,7 +54,7 @@ namespace FitnessGym.API.Controllers.Identity
             };
             // logica back end create cont
             //use datastore
-            return Ok();
+            return Ok(googleToken.AccessToken);
         }
 
         [HttpGet]

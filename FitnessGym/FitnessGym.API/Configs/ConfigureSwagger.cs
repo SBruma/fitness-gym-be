@@ -33,6 +33,24 @@ namespace FitnessGym.API.Configs
                         new string[]{}
                     }
                 });
+                option.AddSecurityDefinition("oauth2", new OpenApiSecurityScheme
+                {
+                    Type = SecuritySchemeType.OAuth2,
+                    Flows = new OpenApiOAuthFlows
+                    {
+                        AuthorizationCode = new OpenApiOAuthFlow
+                        {
+                            AuthorizationUrl = new Uri("https://accounts.google.com/o/oauth2/v2/auth"),
+                            TokenUrl = new Uri("https://oauth2.googleapis.com/token"),
+                            Scopes = new Dictionary<string, string>
+                            {
+                                {"https://www.googleapis.com/auth/userinfo.email", "Access to your email address"},
+                                {"https://www.googleapis.com/auth/userinfo.profile", "Access to your profile information"},
+                                {"openid",""}
+                            },
+                        }
+                    }
+                }); ;
             });
 
             return services;

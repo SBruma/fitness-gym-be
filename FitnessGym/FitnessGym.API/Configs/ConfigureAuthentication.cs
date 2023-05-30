@@ -34,7 +34,7 @@ namespace FitnessGym.API.Configs
                 {
                     options.ClientId = configuration["Google:ClientId"];
                     options.ClientSecret = configuration["Google:ClientSecret"];
-                    options.ReturnUrlParameter = "identity/api/signin-google";
+                    //options.ReturnUrlParameter = "https://localhost:7270/api/Identity/signin-google";
                 });
 
             return services;

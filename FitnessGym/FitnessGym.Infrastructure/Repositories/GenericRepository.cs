@@ -81,7 +81,7 @@ namespace FitnessGym.Infrastructure.Repositories
             return entity is not null ? Result.Ok(entity) : Result.Fail(new NotFoundError(typeof(T)));
         }
 
-        protected IQueryable<T> Get(Expression<Func<T, bool>> filter, PaginationFilter paginationFilter, Expression<Func<T, object>> orderBy = null)
+        protected IQueryable<T> Get(Expression<Func<T, bool>> filter, PaginationFilter paginationFilter = null, Expression<Func<T, object>> orderBy = null)
         {
             var query = _dbSet.AsNoTracking().AsQueryable();
             query = query.Where(entity => entity.IsDeleted == false);

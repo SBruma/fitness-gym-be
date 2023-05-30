@@ -12,5 +12,6 @@ namespace FitnessGym.Application.Mappers
         EquipmentMaintenanceMapper EquipmentMaintenanceMapper { get; }
         MembershipMapper MembershipMapper { get; }
         StaffScheduleMapper StaffScheduleMapper { get; }
+        StaffBookingMapper StaffBookingMapper { get; }
     }
 }

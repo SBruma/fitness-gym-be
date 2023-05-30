@@ -1,5 +1,7 @@
 ﻿using FitnessGym.Application.Dtos.Gyms;
+using FitnessGym.Application.Dtos.Gyms.Update;
 using FitnessGym.Domain.Entities.Members;
+using Microsoft.AspNetCore.Mvc;
 
 namespace FitnessGym.Application.Mappers.Gyms
 {
@@ -37,6 +39,19 @@ namespace FitnessGym.Application.Mappers.Gyms
             };
 
             return dto;
+        }
+
+        public void MapUpdateEntities(UpdateStaffSchedule dto, List<StaffSchedule> entities)
+        {
+            for (int i = 0; i < entities.Count; i++)
+            {
+                var scheduleDto = dto.Schedules.Where(dto => dto.DayOfWeek == entities[i].DayOfWeek).FirstOrDefault();
+                entities[i].StaffId = entities[i].StaffId;
+                entities[i].StartTime = scheduleDto?.StartTime != null ? scheduleDto.StartTime.Value.ToTimeSpan() : null;
+                entities[i].EndTime = scheduleDto?.EndTime != null ? scheduleDto.EndTime.Value.ToTimeSpan() : null;
+                entities[i].BreakStartTime = scheduleDto?.BreakStartTime != null ? scheduleDto.BreakStartTime.Value.ToTimeSpan() : null;
+                entities[i].BreakEndTime = scheduleDto?.BreakEndTime != null ? scheduleDto.BreakEndTime.Value.ToTimeSpan() : null;
+            }
         }
     }
 }

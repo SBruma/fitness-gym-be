@@ -9,5 +9,10 @@ namespace FitnessGym.Application.Errors
         {
             Metadata.Add("ErrorCode", HttpStatusCode.InternalServerError);
         }
+
+        public UpdateError(Type type) : base($"{type} couldn't be updated")
+        {
+            Metadata.Add("ErrorCode", HttpStatusCode.InternalServerError);
+        }
     }
 }
