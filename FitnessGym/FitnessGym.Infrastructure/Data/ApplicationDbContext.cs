@@ -1,5 +1,4 @@
 ﻿using Duende.IdentityServer.EntityFramework.Entities;
-using Duende.IdentityServer.EntityFramework.Extensions;
 using FitnessGym.Domain.Configurations.Gyms;
 using FitnessGym.Domain.Configurations.Members;
 using FitnessGym.Domain.Entities.Gyms;

@@ -5,6 +5,15 @@ namespace FitnessGym.Domain.Configurations.Members
 {
     public class StaffScheduleConfiguration : AuditableEntityConfiguration<StaffSchedule>
     {
+        const int START_TIME = 8;
+        const int END_TIME = 12;
+        const int BREAK_START_TIME = 13;
+        const int BREAK_END_TIME = 17;
+        const string SCHEDULE_CONSTRAINT_NAME = "CK_Schedule_Interval";
+        const string SCHEDULE_CONSTRAINT = "(\"StartTime\" < \"BreakStartTime\") AND " +
+                                            "(\"BreakStartTime\" < \"BreakEndTime\") AND " +
+                                            "(\"BreakEndTime\" < \"EndTime\")";
+
         public void Configure(EntityTypeBuilder<StaffSchedule> builder)
         {
             base.Configure(builder);

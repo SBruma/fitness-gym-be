@@ -24,9 +24,9 @@ namespace FitnessGym.Infrastructure.Repositories
         {
             try
             {
-                await _dbSet.AddAsync(entity, cancellationToken);
+            await _dbSet.AddAsync(entity, cancellationToken);
                 return Result.Ok();
-            }
+        }
             catch (Exception)
             {
                 return Result.Fail(new NotCreatedError(entity.GetType()));
@@ -36,8 +36,8 @@ namespace FitnessGym.Infrastructure.Repositories
         public virtual async Task<Result> AddRange(IEnumerable<T> entities, CancellationToken cancellationToken = default)
         {
             try
-            {
-                await _dbSet.AddRangeAsync(entities, cancellationToken);
+        {
+            await _dbSet.AddRangeAsync(entities, cancellationToken);
                 return Result.Ok();
             }
             catch (Exception)
@@ -49,12 +49,12 @@ namespace FitnessGym.Infrastructure.Repositories
         public virtual Result Delete(T entityToDelete)
         {
             try
-            {
-                _dbSet.Attach(entityToDelete);
-                _context.Entry(entityToDelete).State = EntityState.Modified;
-                entityToDelete.IsDeleted = true;
+        {
+            _dbSet.Attach(entityToDelete);
+            _context.Entry(entityToDelete).State = EntityState.Modified;
+            entityToDelete.IsDeleted = true;
                 return Result.Ok();
-            }
+        }
             catch (Exception)
             {
                 return Result.Fail(new NotModifiedError(entityToDelete.GetType()));
@@ -65,7 +65,7 @@ namespace FitnessGym.Infrastructure.Repositories
         {
             try
             {
-                _dbSet.Update(entityToUpdate);
+            _dbSet.Update(entityToUpdate);
                 return Result.Ok();
             }
             catch (Exception)

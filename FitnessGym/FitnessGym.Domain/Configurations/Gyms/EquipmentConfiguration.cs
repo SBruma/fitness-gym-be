@@ -46,6 +46,7 @@ namespace FitnessGym.Domain.Configurations.Gyms
                 .HasMaxLength(250)
                 .IsRequired(false);
 
+            builder.Property(equipment => equipment.Level).IsRequired();
             builder.Property(equipment => equipment.Category).IsRequired();
             builder.Property(equipment => equipment.Status).IsRequired();
             builder.Property(equipment => equipment.PurchaseDate).IsRequired();

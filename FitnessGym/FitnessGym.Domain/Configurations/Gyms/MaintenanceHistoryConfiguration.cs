@@ -6,9 +6,14 @@ namespace FitnessGym.Domain.Configurations.Gyms
 {
     public class MaintenanceHistoryConfiguration : AuditableEntityConfiguration<MaintenanceHistory>
     {
+        const string MAINTENANCE_CONSTRAINT_NAME = "CK_Maintenance_Interval";
+        const string MAINTENANCE_CONSTRAINT = "(\"StartDate\" < \"EndDate\")";
+
         public void Configure(EntityTypeBuilder<MaintenanceHistory> builder)
         {
             base.Configure(builder);
+
+            builder.ToTable(t => t.HasCheckConstraint(MAINTENANCE_CONSTRAINT_NAME, MAINTENANCE_CONSTRAINT));
 
             builder.Property(m => m.Id)
                 .HasConversion(mId => mId.Value,

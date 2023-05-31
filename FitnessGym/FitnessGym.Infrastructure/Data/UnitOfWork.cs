@@ -68,7 +68,7 @@ namespace FitnessGym.Infrastructure.Data
         protected virtual void Dispose(bool disposing)
         {
             if (disposing)
-            {
+        {
                 _context.Dispose();
             }
         }

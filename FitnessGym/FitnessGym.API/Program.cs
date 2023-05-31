@@ -40,6 +40,9 @@ builder.Services.AddInfrastructure(builder.Configuration);
 builder.Services.AddApplication();
 builder.Services.ConfigureAuthenticationOptions(builder.Configuration);
 
+builder.Host.UseSerilog((context, configuration) =>
+    configuration.ReadFrom.Configuration(context.Configuration));
+
 var app = builder.Build();
 
 app.UseSerilogRequestLogging();
@@ -56,6 +59,8 @@ if (app.Environment.IsDevelopment())
         options.OAuth2RedirectUrl("https://localhost:7270/api/Identity/signin-google");
     });
 }
+
+app.UseSerilogRequestLogging();
 
 app.UseHttpsRedirection();
 
