@@ -1,21 +1,22 @@
 ﻿using FitnessGym.Infrastructure.Data.Interfaces;
 using FitnessGym.Infrastructure.Repositories.Interfaces.Gyms;
 using FitnessGym.Infrastructure.Repositories.Interfaces.Members;
+using FluentResults;
 
 namespace FitnessGym.Infrastructure.Data
 {
     public class UnitOfWork : IUnitOfWork
     {
         private readonly ApplicationDbContext _context;
-        private readonly IGymRepository _gymRepository;
-        private readonly IFloorRepository _floorRepository;
-        private readonly IEquipmentRepository _equipmentRepository;
-        private readonly IMaintenanceHistoryRepository _maintenanceHistoryRepository;
-        private readonly IMemberRepository _memberRepository;
-        private readonly IStaffRepository _staffRepository;
-        private readonly IStaffBookingRepository _staffBookingRepository;
-        private readonly IStaffScheduleRepository _staffScheduleRepository;
-        private readonly IMembershipRepository _membershipRepository;
+        public IGymRepository GymRepository { get; }
+        public IFloorRepository FloorRepository { get; }
+        public IEquipmentRepository EquipmentRepository { get; }
+        public IMaintenanceHistoryRepository MaintenanceHistoryRepository { get; }
+        public IMemberRepository MemberRepository { get; }
+        public IStaffRepository StaffRepository { get; }
+        public IStaffBookingRepository StaffBookingRepository { get; }
+        public IStaffScheduleRepository StaffScheduleRepository { get; }
+        public IMembershipRepository MembershipRepository { get; }
 
         public UnitOfWork(ApplicationDbContext context,
                             IGymRepository gymRepository,
@@ -29,15 +30,15 @@ namespace FitnessGym.Infrastructure.Data
                             IMembershipRepository membershipRepository)
         {
             _context = context;
-            _gymRepository = gymRepository;
-            _floorRepository = floorRepository;
-            _equipmentRepository = equipmentRepository;
-            _maintenanceHistoryRepository = maintenanceHistoryRepository;
-            _memberRepository = memberRepository;
-            _staffRepository = staffRepository;
-            _staffBookingRepository = staffBookingRepository;
-            _staffScheduleRepository = staffScheduleRepository;
-            _membershipRepository = membershipRepository;
+            GymRepository = gymRepository;
+            FloorRepository = floorRepository;
+            EquipmentRepository = equipmentRepository;
+            MaintenanceHistoryRepository = maintenanceHistoryRepository;
+            MemberRepository = memberRepository;
+            StaffRepository = staffRepository;
+            StaffBookingRepository = staffBookingRepository;
+            StaffScheduleRepository = staffScheduleRepository;
+            MembershipRepository = membershipRepository;
         }
 
         public async Task RollbackAsync()
@@ -45,9 +46,31 @@ namespace FitnessGym.Infrastructure.Data
             await _context.DisposeAsync();
         }
 
-        public Task SaveChangesAsync(CancellationToken cancellationToken = default)
+        public async Task<Result> SaveChangesAsync(CancellationToken cancellationToken = default)
         {
-            return _context.SaveChangesAsync(cancellationToken);
+            try
+            {
+                await _context.SaveChangesAsync(cancellationToken);
+                return Result.Ok();
+            }
+            catch (Exception e)
+            {
+                return Result.Fail(new Error(e.Message + e.InnerException));
+            }
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposing)
+        {
+                _context.Dispose();
+            }
         }
     }
 }

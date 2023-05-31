@@ -1,8 +1,7 @@
-﻿using FitnessGym.Domain.Entities;
-using Microsoft.EntityFrameworkCore;
+﻿using FitnessGym.Domain.Entities.Members;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace FitnessGym.Domain.Configurations
+namespace FitnessGym.Domain.Configurations.Members
 {
     public class StaffScheduleConfiguration : AuditableEntityConfiguration<StaffSchedule>
     {
@@ -26,11 +25,10 @@ namespace FitnessGym.Domain.Configurations
                 .WithMany(user => user.StaffSchedule)
                 .HasForeignKey(schedule => schedule.StaffId);
 
-            builder.ToTable(t => t.HasCheckConstraint(SCHEDULE_CONSTRAINT_NAME, SCHEDULE_CONSTRAINT));
-            builder.Property(schedule => schedule.StartTime).HasDefaultValue(TimeSpan.FromHours(START_TIME)).IsRequired();
-            builder.Property(schedule => schedule.BreakStartTime).HasDefaultValue(TimeSpan.FromHours(BREAK_START_TIME)).IsRequired();
-            builder.Property(schedule => schedule.BreakEndTime).HasDefaultValue(TimeSpan.FromHours(BREAK_END_TIME)).IsRequired();
-            builder.Property(schedule => schedule.EndTime).HasDefaultValue(TimeSpan.FromHours(END_TIME)).IsRequired();
+            builder.Property(schedule => schedule.StartTime).IsRequired(false);
+            builder.Property(schedule => schedule.BreakStartTime).IsRequired(false);
+            builder.Property(schedule => schedule.BreakEndTime).IsRequired(false);
+            builder.Property(schedule => schedule.EndTime).IsRequired(false);
         }
     }
 }

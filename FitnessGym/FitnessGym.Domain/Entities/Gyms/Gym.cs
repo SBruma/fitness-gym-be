@@ -15,9 +15,9 @@ namespace FitnessGym.Domain.Entities.Gyms
         public DateTime CreatedOnUtc { get; set; }
         public DateTime? ModifiedOnUtc { get; set; }
         public bool IsDeleted { get; set; }
-        public List<Membership> Memberships { get; } = new();
-        public List<Floor> Floors { get; } = new();
+        public List<Membership> Memberships { get; set; } = new();
+        public List<Floor> Floors { get; set; } = new();
     }
 
-    public record GymId(Guid Value);
+    public record struct GymId(Guid Value);
 }

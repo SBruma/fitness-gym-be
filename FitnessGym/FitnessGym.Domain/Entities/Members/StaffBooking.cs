@@ -2,7 +2,7 @@
 using FitnessGym.Domain.Entities.Identity;
 using FitnessGym.Domain.Entities.Interfaces;
 
-namespace FitnessGym.Domain.Entities
+namespace FitnessGym.Domain.Entities.Members
 {
     public class StaffBooking : IAuditableEntity
     {
@@ -19,5 +19,5 @@ namespace FitnessGym.Domain.Entities
         public bool IsDeleted { get; set; }
     }
 
-    public record StaffBookingId(Guid Value);
+    public record struct StaffBookingId(Guid Value);
 }

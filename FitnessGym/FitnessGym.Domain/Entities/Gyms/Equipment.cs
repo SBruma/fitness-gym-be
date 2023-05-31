@@ -15,14 +15,14 @@ namespace FitnessGym.Domain.Entities.Gyms
         public FloorLocation FloorLocation { get; set; }
         public EquipmentCategory Category { get; set; }
         public EquipmentStatus Status { get; set; }
-        public GymId GymId { get; set; }
-        public int Level { get; set; }
-        public Floor Floor { get; set; }
+        public GymId GymId { get; set; } = new GymId(Guid.Empty);
+        public int? Level { get; set; }
+        public Floor? Floor { get; set; }
         public DateTime CreatedOnUtc { get; set; }
         public DateTime? ModifiedOnUtc { get; set; }
         public bool IsDeleted { get; set; }
         public List<MaintenanceHistory> MaintenanceHistory { get; } = new();
     }
 
-    public record EquipmentId(Guid Value);
+    public record struct EquipmentId(Guid Value);
 }

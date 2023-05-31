@@ -1,4 +1,4 @@
-﻿using FitnessGym.Domain.Entities;
+﻿using FitnessGym.Domain.Entities.Members;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -26,6 +26,7 @@ namespace FitnessGym.Domain.Configurations.Members
             builder.Property(sb => sb.Id)
                 .HasConversion(staffBookingId => staffBookingId.Value,
                                 value => new StaffBookingId(value))
+                .HasDefaultValueSql("uuid_generate_v4()")
                 .IsRequired();
             builder.Property(sb => sb.SessionStart)
                 .IsRequired();

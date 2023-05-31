@@ -19,6 +19,6 @@ namespace FitnessGym.Domain.Entities.Members
         public bool IsDeleted { get; set; }
     }
 
-    public record MembershipId(Guid Value);
-    public record QRCode(byte[] Value);
+    public record struct MembershipId(Guid Value);
+    public record struct QRCode(byte[] Value);
 }
