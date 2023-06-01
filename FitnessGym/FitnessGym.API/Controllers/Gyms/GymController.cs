@@ -1,4 +1,5 @@
-﻿using FitnessGym.Application.Dtos.Gyms;
+﻿using FitnessGym.API.Configs;
+using FitnessGym.Application.Dtos.Gyms;
 using FitnessGym.Application.Dtos.Gyms.Update;
 using FitnessGym.Application.Services.Interfaces.Gyms;
 using FitnessGym.Domain.Entities.Gyms;
@@ -19,6 +20,7 @@ namespace FitnessGym.API.Controllers.Gyms
         }
 
         [HttpGet]
+        [Authorize(Policy = Policies.StaffManager)]
         [ProducesResponseType(typeof(List<GymDto>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         public async Task<IActionResult> Get()

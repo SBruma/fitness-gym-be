@@ -8,6 +8,7 @@ namespace FitnessGym.Application.Services.Interfaces.Identity
     {
         public Task<Result<ApplicationUser>> Register(RegisterDto registerDto);
         public Task<Result<TokenData>> Login(LoginDto loginDto);
-        public Task<TokenData> GenerateTokenAsync(ApplicationUser user);
+        public Task<TokenData> GenerateToken(ApplicationUser user);
+        public Task<Result<TokenData>> RefreshToken(TokenData tokenData);
     }
 }

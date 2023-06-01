@@ -1,4 +1,5 @@
 ﻿using FitnessGym.Application.Dtos.Identity;
+using FitnessGym.Application.Errors;
 using FitnessGym.Application.Mappers;
 using FitnessGym.Application.Options;
 using FitnessGym.Application.Services.Interfaces.Identity;
@@ -18,21 +19,18 @@ namespace FitnessGym.Application.Services.Identity
     {
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
-        private readonly RoleManager<ApplicationUser> _roleManager;
         private readonly IMapper _mapper;
         private readonly AppOptions _appOptions;
 
         public IdentityService(UserManager<ApplicationUser> userManager,
                                 SignInManager<ApplicationUser> signInManager,
                                 IMapper mapper,
-                                IOptionsSnapshot<AppOptions> appOptions,
-                                RoleManager<ApplicationUser> roleManager)
+                                IOptionsSnapshot<AppOptions> appOptions)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _mapper = mapper;
             _appOptions = appOptions.Value;
-            _roleManager = roleManager;
         }
 
         public async Task<Result<TokenData>> Login(LoginDto loginDto)
@@ -45,7 +43,7 @@ namespace FitnessGym.Application.Services.Identity
             }
 
             var user = await _userManager.FindByNameAsync(loginDto.Email);
-            var tokenResponse = await GenerateTokenAsync(user);
+            var tokenResponse = await GenerateToken(user);
             user.AccesToken = tokenResponse.AccessToken;
             user.RefreshToken = tokenResponse.RefreshToken;
             await _userManager.UpdateAsync(user);
@@ -62,7 +60,7 @@ namespace FitnessGym.Application.Services.Identity
             return registerResult.Succeeded ? Result.Ok(userAccount) : Result.Fail(new Error("Register failed"));
         }
 
-        public async Task<TokenData> GenerateTokenAsync(ApplicationUser user)
+        public async Task<TokenData> GenerateToken(ApplicationUser user)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
             var tokenDescriptor = new SecurityTokenDescriptor
@@ -70,7 +68,12 @@ namespace FitnessGym.Application.Services.Identity
                 Subject = new ClaimsIdentity(new[]
                 {
                     new Claim(JwtClaimTypes.Subject, user.Id.ToString()),
-                    new Claim(JwtClaimTypes.Name, user.UserName),
+                    new Claim(JwtClaimTypes.Name, $"{user.LastName} {user.FirstName}"),
+                    new Claim(JwtClaimTypes.FamilyName, user.LastName),
+                    new Claim(JwtClaimTypes.GivenName, user.FirstName),
+                    new Claim(JwtClaimTypes.Email, user.Email),
+                    new Claim(JwtClaimTypes.BirthDate, user.DateOfBirth.ToString()),
+                    new Claim(JwtClaimTypes.Gender, user.Gender.ToString()),
                     new Claim(JwtClaimTypes.Audience, _appOptions.Audience),
                     new Claim(JwtClaimTypes.Issuer, _appOptions.Issuer)
                 }),
@@ -80,7 +83,7 @@ namespace FitnessGym.Application.Services.Identity
 
             var roles = await _userManager.GetRolesAsync(user);
 
-            foreach (var role in )
+            foreach (var role in roles)
             {
                 tokenDescriptor.Subject.AddClaim(new Claim(JwtClaimTypes.Role, role));
             }
@@ -95,6 +98,26 @@ namespace FitnessGym.Application.Services.Identity
                 AccessToken = accessToken,
                 RefreshToken = refreshToken
             };
+        }
+
+        public async Task<Result<TokenData>> RefreshToken(TokenData tokenData)
+        {
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var jwtToken = tokenHandler.ReadJwtToken(tokenData.AccessToken);
+            var userEmail = jwtToken.Claims.FirstOrDefault(c => c.Type == JwtRegisteredClaimNames.Email)?.Value;
+            var user = await _userManager.FindByEmailAsync(userEmail);
+
+            if (user is null)
+            {
+                return Result.Fail(new NotFoundError(typeof(ApplicationUser)));
+            }
+
+            if (user.RefreshToken != tokenData.RefreshToken)
+            {
+                return Result.Fail(new Error("Refresh token is invalid"));
+            }
+
+            return await GenerateToken(user);
         }
     }
 }

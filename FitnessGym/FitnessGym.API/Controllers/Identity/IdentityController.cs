@@ -5,9 +5,12 @@ using FitnessGym.Application.Services.Interfaces.Others;
 using FitnessGym.Domain.Entities.Identity;
 using Google.Apis.Auth.OAuth2;
 using Google.Apis.Auth.OAuth2.Flows;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Tokens;
+using System.IdentityModel.Tokens.Jwt;
 
 namespace FitnessGym.API.Controllers.Identity
 {
@@ -83,6 +86,16 @@ namespace FitnessGym.API.Controllers.Identity
             return result.IsSuccess ? Ok(result.Value) : BadRequest(result.Reasons);
         }
 
+        [HttpGet("refresh-token")]
+        [Authorize]
+        public async Task<IActionResult> RefreshToken([FromQuery] string refreshToken)
+        {
+            string currentToken = HttpContext.Request.Headers["Authorization"].FirstOrDefault()?.Split(" ").Last();
+            var newTokenResult = await _identityService.RefreshToken(new TokenData { AccessToken = currentToken, RefreshToken = refreshToken });
+
+            return newTokenResult.IsSuccess ? Ok(newTokenResult.Value) : BadRequest();
+        }
+
         [HttpGet]
         [Route("signin-google")]
         public async Task<IActionResult> GoogleCallback(string code, CancellationToken cancellationToken)
@@ -122,7 +135,7 @@ namespace FitnessGym.API.Controllers.Identity
             await _userManager.SetAuthenticationTokenAsync(applicationUser, "Google", "access_token", googleToken.JwtToken);
             //await _userManager.SetAuthenticationTokenAsync(applicationUser, "Google", "refresh_token", googleToken.RefreshToken);
 
-            return Ok(_identityService.GenerateTokenAsync(applicationUser));
+            return Ok(_identityService.GenerateToken(applicationUser));
         }
 
         [HttpGet]
