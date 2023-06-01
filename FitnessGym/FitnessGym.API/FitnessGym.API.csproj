@@ -17,6 +17,8 @@
     <PackageReference Include="Duende.IdentityServer.EntityFramework.Storage" Version="6.3.0" />
     <PackageReference Include="Duende.IdentityServer.Storage" Version="6.3.0" />
     <PackageReference Include="Google.Apis.Auth" Version="1.60.0" />
+    <PackageReference Include="Google.Apis.PeopleService.v1" Version="1.60.0.2924" />
+    <PackageReference Include="MailKit" Version="4.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.Google" Version="7.0.5" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="7.0.5" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Abstractions" Version="2.2.0" />

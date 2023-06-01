@@ -45,12 +45,12 @@ namespace FitnessGym.API.Configs
                             Scopes = new Dictionary<string, string>
                             {
                                 {"https://www.googleapis.com/auth/userinfo.email", "Access to your email address"},
-                                {"https://www.googleapis.com/auth/userinfo.profile", "Access to your profile information"},
-                                {"openid",""}
-                            },
+                                {"https://www.googleapis.com/auth/userinfo.profile", "See your personal info"},
+                                {"openid","Associate you with your personal info on Google"}
+                            }
                         }
                     }
-                }); ;
+                });
             });
 
             return services;

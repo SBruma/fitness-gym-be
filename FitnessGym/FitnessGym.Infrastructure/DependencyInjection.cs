@@ -1,6 +1,7 @@
 ﻿using FitnessGym.Domain.Entities.Identity;
 using FitnessGym.Infrastructure.Configs;
 using FitnessGym.Infrastructure.Data;
+using FitnessGym.Infrastructure.Data.CustomTokenProviders;
 using FitnessGym.Infrastructure.Data.Interceptors;
 using FitnessGym.Infrastructure.Data.Interfaces;
 using FitnessGym.Infrastructure.Repositories.Gyms;
@@ -31,34 +32,45 @@ namespace FitnessGym.Infrastructure
                     .AddInterceptors(auditableInterceptor);
             });
 
-            services.AddIdentity<ApplicationUser, IdentityRole<Guid>>()
-                .AddEntityFrameworkStores<ApplicationDbContext>();
+            services.AddIdentity<ApplicationUser, IdentityRole<Guid>>(options =>
+            {
+                options.User.RequireUniqueEmail = true;
+                options.SignIn.RequireConfirmedEmail = true;
+            })
+            .AddEntityFrameworkStores<ApplicationDbContext>()
+            .AddDefaultTokenProviders()
+            .AddTokenProvider<EmailConfirmationTokenProvider<ApplicationUser>>("emailconfirmation");
 
-            services.AddIdentityServer(options =>
-                {
-                    options.Events.RaiseErrorEvents = true;
-                    options.Events.RaiseInformationEvents = true;
-                    options.Events.RaiseFailureEvents = true;
-                    options.Events.RaiseSuccessEvents = true;
-                    options.EmitStaticAudienceClaim = true;
-                })
-                .AddConfigurationStore(options =>
-                {
-                    options.ConfigureDbContext = b => b.UseNpgsql(connectionString,
-                        sql => sql.MigrationsAssembly(assembly));
-                })
-                .AddOperationalStore(options =>
-                {
-                    options.ConfigureDbContext = b => b.UseNpgsql(connectionString,
-                        sql => sql.MigrationsAssembly(assembly));
-                    options.EnableTokenCleanup = true;
-                    options.RemoveConsumedTokens = true;
-                })
-                .AddAspNetIdentity<ApplicationUser>()
-                .AddInMemoryClients(IdentityConfig.Clients(configuration))  // Configure clients
-                .AddInMemoryIdentityResources(IdentityConfig.IdentityResources)  // Configure identity resources
-                .AddInMemoryApiScopes(IdentityConfig.ApiScopes)  // Configure API scopes
-                .AddInMemoryApiResources(IdentityConfig.ApiResources);  // Configure API resources;
+            services.Configure<DataProtectionTokenProviderOptions>(opt =>
+                opt.TokenLifespan = TimeSpan.FromHours(2));
+            services.Configure<EmailConfirmationTokenProviderOptions>(opt =>
+                opt.TokenLifespan = TimeSpan.FromDays(3));
+
+            //services.AddIdentityServer(options =>
+            //    {
+            //        options.Events.RaiseErrorEvents = true;
+            //        options.Events.RaiseInformationEvents = true;
+            //        options.Events.RaiseFailureEvents = true;
+            //        options.Events.RaiseSuccessEvents = true;
+            //        options.EmitStaticAudienceClaim = true;
+            //    })
+            //    .AddConfigurationStore(options =>
+            //    {
+            //        options.ConfigureDbContext = b => b.UseNpgsql(connectionString,
+            //            sql => sql.MigrationsAssembly(assembly));
+            //    })
+            //    .AddOperationalStore(options =>
+            //    {
+            //        options.ConfigureDbContext = b => b.UseNpgsql(connectionString,
+            //            sql => sql.MigrationsAssembly(assembly));
+            //        options.EnableTokenCleanup = true;
+            //        options.RemoveConsumedTokens = true;
+            //    })
+            //    .AddAspNetIdentity<ApplicationUser>()
+            //    .AddInMemoryClients(IdentityConfig.Clients(configuration))  // Configure clients
+            //    .AddInMemoryIdentityResources(IdentityConfig.IdentityResources)  // Configure identity resources
+            //    .AddInMemoryApiScopes(IdentityConfig.ApiScopes)  // Configure API scopes
+            //    .AddInMemoryApiResources(IdentityConfig.ApiResources);  // Configure API resources;
 
             services.AddScoped<IGymRepository, GymRepository>();
             services.AddScoped<IFloorRepository, FloorRepository>();
