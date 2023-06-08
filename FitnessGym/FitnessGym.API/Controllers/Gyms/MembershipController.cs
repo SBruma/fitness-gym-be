@@ -46,5 +46,15 @@ namespace FitnessGym.API.Controllers.Gyms
 
             return result.IsSuccess ? Ok(result.Value) : NotFound(result.Reasons);
         }
+
+        [HttpPost("check-in-out")]
+        [ProducesResponseType(typeof(MembershipDto), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        public async Task<IActionResult> CheckInOutQRCode([FromBody] QRCodeDto qrcode)
+        {
+            var result = await _membershipService.CheckInOut(qrcode);
+
+            return result.IsSuccess ? Ok(result.Value) : BadRequest(result.Reasons);
+        }
     }
 }

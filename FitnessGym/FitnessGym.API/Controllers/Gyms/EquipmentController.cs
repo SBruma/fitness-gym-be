@@ -31,6 +31,16 @@ namespace FitnessGym.API.Controllers.Gyms
             return result.IsSuccess ? Ok(result.Value) : BadRequest(result.Reasons);
         }
 
+        [HttpPost("insert-many")]
+        [ProducesResponseType(typeof(List<MembershipDto>), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        public async Task<IActionResult> Insert([FromBody] List<CreateEquipmentDto> request)
+        {
+            var result = await _equipmentService.Create(request);
+
+            return result.IsSuccess ? Ok(result.Value) : BadRequest(result.Reasons);
+        }
+
         [HttpGet]
         [ProducesResponseType(typeof(List<EquipmentDto>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]

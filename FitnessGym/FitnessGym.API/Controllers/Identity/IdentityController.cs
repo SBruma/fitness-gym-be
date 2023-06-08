@@ -54,7 +54,7 @@ namespace FitnessGym.API.Controllers.Identity
                 EmailSubject = "Confirm your email",
                 EmailBody = $"<h2>Confirm your email</h2><p>Dear {user.LastName} {user.FirstName},</p>" +
                             $"<p>Thank you for registering. Please click the following link to confirm your email:</p>" +
-                            $"<p><a href=\"{confirmationLink}\">{confirmationLink}</a></p>",
+                            $"<p><a href=\"{confirmationLink}\">Click here to confirm</a></p>",
                 EmailToId = user.Email,
                 EmailToName = $"{user.LastName} {user.FirstName}"
             });
@@ -87,11 +87,9 @@ namespace FitnessGym.API.Controllers.Identity
         }
 
         [HttpGet("refresh-token")]
-        [Authorize]
-        public async Task<IActionResult> RefreshToken([FromQuery] string refreshToken)
+        public async Task<IActionResult> RefreshToken([FromQuery] string refreshToken, [FromQuery] string accessToken)
         {
-            string currentToken = HttpContext.Request.Headers["Authorization"].FirstOrDefault()?.Split(" ").Last();
-            var newTokenResult = await _identityService.RefreshToken(new TokenData { AccessToken = currentToken, RefreshToken = refreshToken });
+            var newTokenResult = await _identityService.RefreshToken(new TokenData { AccessToken = accessToken, RefreshToken = refreshToken });
 
             return newTokenResult.IsSuccess ? Ok(newTokenResult.Value) : BadRequest();
         }

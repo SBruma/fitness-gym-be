@@ -10,8 +10,7 @@ using FitnessGym.Infrastructure.Data.Interfaces;
 using FluentResults;
 using IronBarCode;
 using Microsoft.AspNetCore.Identity;
-using System;
-using System.Text.Json;
+using Newtonsoft.Json;
 using Result = FluentResults.Result;
 
 namespace FitnessGym.Application.Services.Gyms
@@ -85,7 +84,7 @@ namespace FitnessGym.Application.Services.Gyms
 
             foreach (var item in membershipHistoryResult.Value)
             {
-                if (item != membershipHistoryResult.Value.First())
+                if (item.ExpirationDate < DateTime.UtcNow)
                 {
                     item.QRCode = new QRCode(new byte[0]);
                 }
@@ -109,7 +108,59 @@ namespace FitnessGym.Application.Services.Gyms
                                             Result.Fail(new NotFoundError(typeof(Membership)));
         }
 
-        public byte[] GenerateQRCode(string text)
+        public async Task<Result<GymCheckInDto>> CheckInOut(QRCodeDto qrCode)
+        {
+            BarcodeResults barcodeResults;
+            try
+            {
+                barcodeResults = await BarcodeReader.ReadAsync(Convert.FromBase64String(qrCode.QRCode));
+            }
+            catch (Exception e)
+            {
+                return Result.Fail(new Error(e.Message));
+            }
+
+            var qrCodeData = JsonConvert.DeserializeObject<QRMembershipData>(barcodeResults.Values().First());
+            var membershipId = new MembershipId(qrCodeData.Id);
+            var getActiveCheckInResult = await _unitOfWork.GymCheckInRepository.GetActive(membershipId);
+
+            if (getActiveCheckInResult.IsFailed)
+            {
+                var checkIn = new GymCheckIn
+                {
+                    CheckInTime = DateTime.UtcNow,
+                    MembershipId = membershipId,
+                    CheckOutTime = null
+                };
+
+                await _unitOfWork.GymCheckInRepository.Add(checkIn);
+                var createResult = await _unitOfWork.SaveChangesAsync();
+
+                if (createResult.IsSuccess)
+                {
+                    return Result.Ok(new GymCheckInDto
+                    {
+                        Id = checkIn.Id,
+                        CheckInTime = checkIn.CheckInTime,
+                        CheckOutTime = null
+                    });
+                }
+            }
+
+            var activeCheckIn = getActiveCheckInResult.Value;
+            activeCheckIn.CheckOutTime = DateTime.UtcNow;
+            _unitOfWork.GymCheckInRepository.Update(activeCheckIn);
+            await _unitOfWork.SaveChangesAsync();
+
+            return Result.Ok(new GymCheckInDto
+            {
+                Id = activeCheckIn.Id,
+                CheckInTime = activeCheckIn.CheckInTime,
+                CheckOutTime = activeCheckIn.CheckOutTime
+            });
+        }
+
+        private byte[] GenerateQRCode(string text)
         {
             var QRCode = QRCodeWriter.CreateQrCode(text, 200);
 
@@ -124,7 +175,7 @@ namespace FitnessGym.Application.Services.Gyms
                 Id = membership.Id.Value
             };
 
-            return JsonSerializer.Serialize(QRCodeData);
+            return System.Text.Json.JsonSerializer.Serialize(QRCodeData);
         }
     }
 }

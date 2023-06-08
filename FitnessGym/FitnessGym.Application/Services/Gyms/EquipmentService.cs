@@ -27,16 +27,29 @@ namespace FitnessGym.Application.Services.Gyms
         public async Task<Result<EquipmentDto>> Create(CreateEquipmentDto createEquipmentDto)
         {
             var equipment = _mapper.EquipmentMapper.MapCreateEquipmentToEquipment(createEquipmentDto);
-            var result = await _unitOfWork.EquipmentRepository.Add(equipment);
+            await _unitOfWork.EquipmentRepository.Add(equipment);
+            var result = await _unitOfWork.SaveChangesAsync();
 
             if (result.IsFailed)
             {
                 return Result.Fail(new EquipmentNotCreatedError());
             }
 
-            await _unitOfWork.SaveChangesAsync();
-
             return Result.Ok(_mapper.EquipmentMapper.MapEquipmentToEquipmentDto(equipment));
+        }
+
+        public async Task<Result<List<EquipmentDto>>> Create(List<CreateEquipmentDto> createEquipmentDtos)
+        {
+            var equipments = _mapper.EquipmentMapper.MapCreateEquipmentToEquipment(createEquipmentDtos);
+            await _unitOfWork.EquipmentRepository.AddRange(equipments);
+            var result = await _unitOfWork.SaveChangesAsync();
+
+            if (result.IsFailed)
+            {
+                return Result.Fail(new EquipmentNotCreatedError());
+            }
+
+            return Result.Ok(_mapper.EquipmentMapper.EquipmentsToEquipmentsDto(equipments));
         }
 
         public async Task<Result> Delete(EquipmentId equipmentId)
@@ -85,5 +98,6 @@ namespace FitnessGym.Application.Services.Gyms
             return updateResult.IsSuccess ? Result.Ok(_mapper.EquipmentMapper.MapEquipmentToExpandedEquipmentDto(retrieveResult.Value)) :
                                             Result.Fail(new UpdateError(equipmentId.Value));
         }
+
     }
 }

@@ -15,6 +15,7 @@ namespace FitnessGym.Infrastructure.Data.Interfaces
         IStaffBookingRepository StaffBookingRepository { get; }
         IStaffScheduleRepository StaffScheduleRepository { get; }
         IMembershipRepository MembershipRepository { get; }
+        IGymCheckInRepository GymCheckInRepository { get; }
         Task<Result> SaveChangesAsync(CancellationToken cancellationToken = default);
         Task RollbackAsync();
     }

@@ -18,6 +18,8 @@ namespace FitnessGym.Infrastructure.Data
         public IStaffScheduleRepository StaffScheduleRepository { get; }
         public IMembershipRepository MembershipRepository { get; }
 
+        public IGymCheckInRepository GymCheckInRepository { get; }
+
         public UnitOfWork(ApplicationDbContext context,
                             IGymRepository gymRepository,
                             IFloorRepository floorRepository,
@@ -27,7 +29,8 @@ namespace FitnessGym.Infrastructure.Data
                             IStaffRepository staffRepository,
                             IStaffBookingRepository staffBookingRepository,
                             IStaffScheduleRepository staffScheduleRepository,
-                            IMembershipRepository membershipRepository)
+                            IMembershipRepository membershipRepository,
+                            IGymCheckInRepository gymCheckInRepository)
         {
             _context = context;
             GymRepository = gymRepository;
@@ -39,6 +42,7 @@ namespace FitnessGym.Infrastructure.Data
             StaffBookingRepository = staffBookingRepository;
             StaffScheduleRepository = staffScheduleRepository;
             MembershipRepository = membershipRepository;
+            GymCheckInRepository = gymCheckInRepository;
         }
 
         public async Task RollbackAsync()
@@ -68,7 +72,7 @@ namespace FitnessGym.Infrastructure.Data
         protected virtual void Dispose(bool disposing)
         {
             if (disposing)
-        {
+            {
                 _context.Dispose();
             }
         }

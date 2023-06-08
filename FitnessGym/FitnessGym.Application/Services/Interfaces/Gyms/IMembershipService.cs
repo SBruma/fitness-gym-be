@@ -10,5 +10,6 @@ namespace FitnessGym.Application.Services.Interfaces.Gyms
         Task<Result<MembershipDto>> Create(CreateMembershipDto createMembershipDto);
         Task<Result<MembershipDto>> GetActiveMembership(GymId gymId, string userEmail);
         Task<Result<List<MembershipDto>>> GetHistory(GymId gymId, string userEmail);
+        Task<Result<GymCheckInDto>> CheckInOut(QRCodeDto qrCode);
     }
 }

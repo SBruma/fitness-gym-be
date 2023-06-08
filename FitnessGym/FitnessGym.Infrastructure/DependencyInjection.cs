@@ -81,6 +81,7 @@ namespace FitnessGym.Infrastructure
             services.AddScoped<IMembershipRepository, MembershipRepository>();
             services.AddScoped<IStaffBookingRepository, StaffBookingRepository>();
             services.AddScoped<IStaffScheduleRepository, StaffScheduleRepository>();
+            services.AddScoped<IGymCheckInRepository, GymCheckInsRepository>();
             services.AddScoped<IUnitOfWork, UnitOfWork>();
 
             return services;

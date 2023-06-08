@@ -4,6 +4,7 @@ using FitnessGym.Application.Mappers;
 using FitnessGym.Application.Options;
 using FitnessGym.Application.Services.Interfaces.Identity;
 using FitnessGym.Domain.Entities.Identity;
+using FitnessGym.Domain.Entities.Statics;
 using FluentResults;
 using IdentityModel;
 using Microsoft.AspNetCore.Identity;
@@ -44,7 +45,7 @@ namespace FitnessGym.Application.Services.Identity
 
             var user = await _userManager.FindByNameAsync(loginDto.Email);
             var tokenResponse = await GenerateToken(user);
-            user.AccesToken = tokenResponse.AccessToken;
+            user.AccesToken = tokenResponse.AccessToken;///verify refresh token
             user.RefreshToken = tokenResponse.RefreshToken;
             await _userManager.UpdateAsync(user);
 
@@ -56,8 +57,10 @@ namespace FitnessGym.Application.Services.Identity
             var userAccount = _mapper.IdentityMapper.RegisterDtoToUser(registerDto);
             userAccount.UserName = userAccount.Email;
             var registerResult = await _userManager.CreateAsync(userAccount, registerDto.Password);
+            var roleRegisterResult = await _userManager.AddToRoleAsync(userAccount, Roles.Member);
 
-            return registerResult.Succeeded ? Result.Ok(userAccount) : Result.Fail(new Error("Register failed"));
+            return registerResult.Succeeded && roleRegisterResult.Succeeded ?
+                Result.Ok(userAccount) : Result.Fail(new Error("Register failed"));
         }
 
         public async Task<TokenData> GenerateToken(ApplicationUser user)
@@ -117,7 +120,12 @@ namespace FitnessGym.Application.Services.Identity
                 return Result.Fail(new Error("Refresh token is invalid"));
             }
 
-            return await GenerateToken(user);
+            var newToken = await GenerateToken(user);
+            user.AccesToken = newToken.AccessToken;
+            newToken.RefreshToken = user.RefreshToken;
+            await _userManager.UpdateAsync(user);
+
+            return Result.Ok(newToken);
         }
     }
 }

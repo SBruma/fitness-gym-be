@@ -1,5 +1,6 @@
 ﻿using FitnessGym.Domain.Configurations.Gyms;
 using FitnessGym.Domain.Configurations.Members;
+using FitnessGym.Domain.Entities.Enums;
 using FitnessGym.Domain.Entities.Gyms;
 using FitnessGym.Domain.Entities.Identity;
 using FitnessGym.Domain.Entities.Members;
@@ -41,6 +42,7 @@ namespace FitnessGym.Infrastructure.Data
             new FloorConfiguration().Configure(builder.Entity<Floor>());
             new EquipmentConfiguration().Configure(builder.Entity<Equipment>());
             new MaintenanceHistoryConfiguration().Configure(builder.Entity<MaintenanceHistory>());
+            new GymCheckInConfiguration().Configure(builder.Entity<GymCheckIn>());
         }
 
         private void SeedRoles(ModelBuilder builder)
