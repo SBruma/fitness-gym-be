@@ -1,4 +1,5 @@
-﻿using FitnessGym.Application.Dtos.Gyms;
+﻿using FitnessGym.Application.Dtos;
+using FitnessGym.Application.Dtos.Gyms;
 using FitnessGym.Application.Dtos.Gyms.Create;
 using FitnessGym.Application.Services.Interfaces.Gyms;
 using FitnessGym.Domain.Entities.Gyms;
@@ -48,11 +49,31 @@ namespace FitnessGym.API.Controllers.Gyms
         }
 
         [HttpPost("check-in-out")]
-        [ProducesResponseType(typeof(MembershipDto), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(GymCheckInDto), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
-        public async Task<IActionResult> CheckInOutQRCode([FromBody] QRCodeDto qrcode)
+        public async Task<IActionResult> CheckInOutQRCode([FromBody] QRCodeCheckInOutDto request)
         {
-            var result = await _membershipService.CheckInOut(qrcode);
+            var result = await _membershipService.CheckInOut(request);
+
+            return result.IsSuccess ? Ok(result.Value) : BadRequest(result.Reasons);
+        }
+
+        [HttpGet("check-in-out-history")]
+        [ProducesResponseType(typeof(List<GymCheckInHistoryDto>), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        public async Task<IActionResult> CheckInOutHistory([FromQuery] DateTime minimumDate, [FromQuery] Guid gymId)
+        {
+            var result = await _membershipService.GetCheckInOutHistory(minimumDate, new GymId(gymId));
+
+            return result.IsSuccess ? Ok(result.Value) : BadRequest(result.Reasons);
+        }
+
+        [HttpGet("members-in-gym")]
+        [ProducesResponseType(typeof(int), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> GetNumberOfMembersInGym(Guid gymId)
+        {
+            var result = await _membershipService.GetMembersInGym(new GymId(gymId));
 
             return result.IsSuccess ? Ok(result.Value) : BadRequest(result.Reasons);
         }

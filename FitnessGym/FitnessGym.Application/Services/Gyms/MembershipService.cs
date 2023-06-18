@@ -1,4 +1,5 @@
-﻿using FitnessGym.Application.Dtos.Gyms;
+﻿using FitnessGym.Application.Dtos;
+using FitnessGym.Application.Dtos.Gyms;
 using FitnessGym.Application.Dtos.Gyms.Create;
 using FitnessGym.Application.Errors;
 using FitnessGym.Application.Mappers;
@@ -10,7 +11,6 @@ using FitnessGym.Infrastructure.Data.Interfaces;
 using FluentResults;
 using IronBarCode;
 using Microsoft.AspNetCore.Identity;
-using Newtonsoft.Json;
 using Result = FluentResults.Result;
 
 namespace FitnessGym.Application.Services.Gyms
@@ -108,20 +108,9 @@ namespace FitnessGym.Application.Services.Gyms
                                             Result.Fail(new NotFoundError(typeof(Membership)));
         }
 
-        public async Task<Result<GymCheckInDto>> CheckInOut(QRCodeDto qrCode)
+        public async Task<Result<GymCheckInDto>> CheckInOut(QRCodeCheckInOutDto dto)
         {
-            BarcodeResults barcodeResults;
-            try
-            {
-                barcodeResults = await BarcodeReader.ReadAsync(Convert.FromBase64String(qrCode.QRCode));
-            }
-            catch (Exception e)
-            {
-                return Result.Fail(new Error(e.Message));
-            }
-
-            var qrCodeData = JsonConvert.DeserializeObject<QRMembershipData>(barcodeResults.Values().First());
-            var membershipId = new MembershipId(qrCodeData.Id);
+            var membershipId = new MembershipId(dto.QRCodeId);
             var getActiveCheckInResult = await _unitOfWork.GymCheckInRepository.GetActive(membershipId);
 
             if (getActiveCheckInResult.IsFailed)
@@ -148,6 +137,12 @@ namespace FitnessGym.Application.Services.Gyms
             }
 
             var activeCheckIn = getActiveCheckInResult.Value;
+            var minimumTime = activeCheckIn.CheckInTime.AddSeconds(30);
+            if (DateTime.UtcNow < minimumTime)
+            {
+                return Result.Fail(new Error("Wait atleast 2 minutes"));
+            }
+
             activeCheckIn.CheckOutTime = DateTime.UtcNow;
             _unitOfWork.GymCheckInRepository.Update(activeCheckIn);
             await _unitOfWork.SaveChangesAsync();
@@ -158,6 +153,26 @@ namespace FitnessGym.Application.Services.Gyms
                 CheckInTime = activeCheckIn.CheckInTime,
                 CheckOutTime = activeCheckIn.CheckOutTime
             });
+        }
+
+        public async Task<Result<List<GymCheckInHistoryDto>>> GetCheckInOutHistory(DateTime minimumDate, GymId gymId)
+        {
+            var checkInsHistoryResult = await _unitOfWork.GymCheckInRepository.GetHistory(minimumDate, gymId);
+
+            return checkInsHistoryResult.IsSuccess ? checkInsHistoryResult.Value.Select(checkiIn => new GymCheckInHistoryDto
+            {
+                Id = checkiIn.Id,
+                CheckInTime = checkiIn.CheckInTime,
+                CheckOutTime = checkiIn.CheckOutTime,
+                Email = checkiIn.Membership.Member.Email
+            }).ToList() : Result.Fail(checkInsHistoryResult.Errors.First());
+        }
+
+        public async Task<Result<int>> GetMembersInGym(GymId gymId)
+        {
+            var getMembersInGymResult = await _unitOfWork.GymCheckInRepository.GetMembersInGym(gymId);
+
+            return Result.Ok(getMembersInGymResult.Value);
         }
 
         private byte[] GenerateQRCode(string text)
