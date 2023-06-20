@@ -9,6 +9,7 @@ namespace FitnessGym.API.Configs
             services.Configure<AppOptions>(configuration.GetSection("Jwt"));
             services.Configure<AppOptions>(configuration.GetSection("Google"));
             services.Configure<MailSettings>(configuration.GetSection("MailSettings"));
+            services.Configure<AppOptions>(configuration.GetSection("FrontEnd"));
 
             return services;
         }

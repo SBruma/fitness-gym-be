@@ -15,7 +15,7 @@ namespace FitnessGym.Domain.Entities.Identity
         public DateOnly DateOfBirth { get; set; }
         [PersonalData]
         public string? EmergencyPhoneNumber { get; set; }
-        public string? ProfilePicture { get; set; }
+        public string? ProfilePicture { get; set; } = "/images/avatars/1.png";
         [PersonalData]
         public Gender Gender { get; set; } = Gender.Other;
         public DateTime CreatedOnUtc { get; set; }

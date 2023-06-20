@@ -1,16 +1,21 @@
-﻿using FitnessGym.Application.Dtos.Identity;
+﻿using FitnessGym.Application.Dtos.Gyms;
+using FitnessGym.Application.Dtos.Gyms.Update;
+using FitnessGym.Application.Dtos.Identity;
 using FitnessGym.Application.Options;
 using FitnessGym.Application.Services.Interfaces.Identity;
 using FitnessGym.Application.Services.Interfaces.Others;
 using FitnessGym.Domain.Entities.Identity;
+using FluentResults;
 using Google.Apis.Auth.OAuth2;
 using Google.Apis.Auth.OAuth2.Flows;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
-using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
+using System.Linq;
 
 namespace FitnessGym.API.Controllers.Identity
 {
@@ -42,37 +47,61 @@ namespace FitnessGym.API.Controllers.Identity
 
             if (registerResult.IsFailed)
             {
-                return BadRequest();
+                return BadRequest("Email already registered");
             }
 
+            string acceptLanguage = Request.Headers["Accept-Language"];
             var user = registerResult.Value;
             var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-            var confirmationLink = Url.Action(nameof(ConfirmEmail), null, new { email = user.Email, token }, Request.Scheme);
+            var confirmationLink = $"{_appOptions.BaseURL}/{acceptLanguage}/pages/confirm-email?email={user.Email}&token={token}";
+            var conf = UriHelper.Encode(new Uri(confirmationLink));
 
-            var sendEmailResult = _emailService.SendEmail(new MailData
+            Result sendEmailResult;
+
+            if (acceptLanguage == "ro")
             {
-                EmailSubject = "Confirm your email",
-                EmailBody = $"<h2>Confirm your email</h2><p>Dear {user.LastName} {user.FirstName},</p>" +
-                            $"<p>Thank you for registering. Please click the following link to confirm your email:</p>" +
-                            $"<p><a href=\"{confirmationLink}\">Click here to confirm</a></p>",
-                EmailToId = user.Email,
-                EmailToName = $"{user.LastName} {user.FirstName}"
-            });
+                sendEmailResult = _emailService.SendEmail(new MailData
+                {
+                    EmailSubject = "Confirma emailul",
+                    EmailBody = $"<h2>Confirma emailul</h2><p>Draga {user.LastName} {user.FirstName},</p>" +
+                               $"<p>Multumim pentru inregistrare. Vă rugăm să faceți clic pe următorul link pentru a vă confirma e-mailul:</p>" +
+                               $"<p><a href=\"{confirmationLink}\">Click aici pentru a confirma</a></p>",
+                    EmailToId = user.Email,
+                    EmailToName = $"{user.LastName} {user.FirstName}"
+                });
+            }
+            else
+            {
+                sendEmailResult = _emailService.SendEmail(new MailData
+                {
+                    EmailSubject = "Confirm your email",
+                    EmailBody = $"<h2>Confirm your email</h2><p>Dear {user.LastName} {user.FirstName},</p>" +
+                               $"<p>Thank you for registering. Please click the following link to confirm your email:</p>" +
+                               $"<p><a href=\"{confirmationLink}\">Click here to confirm</a></p>",
+                    EmailToId = user.Email,
+                    EmailToName = $"{user.LastName} {user.FirstName}"
+                });
+            }
+
+            if (sendEmailResult.IsFailed)
+            {
+                await _userManager.DeleteAsync(user);
+            }
 
             return sendEmailResult.IsSuccess ? Ok() : BadRequest(sendEmailResult.Reasons);
         }
 
-        [HttpGet("/confirm-email")]
-        public async Task<IActionResult> ConfirmEmail(string token, string email)
+        [HttpPost("confirm-email")]
+        public async Task<IActionResult> ConfirmEmail(ConfirmEmailDto confirmEmailDto)
         {
-            var user = await _userManager.FindByEmailAsync(email);
+            var user = await _userManager.FindByEmailAsync(confirmEmailDto.Email);
 
             if (user is null)
             {
                 return BadRequest();
             }
 
-            var cofirmEmailResult = await _userManager.ConfirmEmailAsync(user, token);
+            var cofirmEmailResult = await _userManager.ConfirmEmailAsync(user, confirmEmailDto.Token);
 
             return cofirmEmailResult.Succeeded ? Ok() : BadRequest();
         }
@@ -92,6 +121,24 @@ namespace FitnessGym.API.Controllers.Identity
             var newTokenResult = await _identityService.RefreshToken(new TokenData { AccessToken = accessToken, RefreshToken = refreshToken });
 
             return newTokenResult.IsSuccess ? Ok(newTokenResult.Value) : BadRequest();
+        }
+
+        [HttpPut]
+        [Authorize]
+        public async Task<IActionResult> Update(UpdateUserDto dto)
+        {
+            var result = await _identityService.Update(dto, GetEmailFromToken());
+
+            return result.IsSuccess ? Ok(result.Value) : BadRequest(result.Reasons);
+        }
+
+        [HttpPut("change-password")]
+        [Authorize]
+        public async Task<IActionResult> ChangePassword(UpdatePasswordDto updatePasswordDto)
+        {
+            var result = await _identityService.UpdatePassword(updatePasswordDto, GetEmailFromToken());
+
+            return result.IsSuccess ? Ok(result) : BadRequest(result.Reasons);
         }
 
         [HttpGet]
@@ -196,6 +243,14 @@ namespace FitnessGym.API.Controllers.Identity
 
             // Handle error case if the request fails
             throw new Exception("Failed to retrieve user information from Google.");
+        }
+
+        private string GetEmailFromToken()
+        {
+            string token = HttpContext.Request.Headers["Authorization"].ToString().Substring("Bearer ".Length);
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var jwtToken = tokenHandler.ReadJwtToken(token);
+            return jwtToken.Claims.FirstOrDefault(c => c.Type == "email")?.Value;
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using FitnessGym.Application.Dtos.Identity;
+﻿using FitnessGym.Application.Dtos.Gyms.Update;
+using FitnessGym.Application.Dtos.Identity;
 using FitnessGym.Application.Errors;
 using FitnessGym.Application.Mappers;
 using FitnessGym.Application.Options;
@@ -63,6 +64,26 @@ namespace FitnessGym.Application.Services.Identity
                 Result.Ok(userAccount) : Result.Fail(new Error("Register failed"));
         }
 
+        public async Task<Result<TokenData>> Update(UpdateUserDto updateUserDto, string email)
+        {
+            var user = await _userManager.FindByEmailAsync(email);
+            _mapper.IdentityMapper.Update(updateUserDto, user);
+            var newTokenData = await GenerateToken(user);
+            user.RefreshToken = newTokenData.RefreshToken;
+            user.AccesToken = newTokenData.AccessToken;
+            var updateResult = await _userManager.UpdateAsync(user);
+
+            return updateResult.Succeeded ? Result.Ok(newTokenData) : Result.Fail(new UpdateError(user.Id));
+        }
+
+        public async Task<Result> UpdatePassword(UpdatePasswordDto updatePasswordDto, string email)
+        {
+            var user = await _userManager.FindByEmailAsync(email);
+            var result = await _userManager.ChangePasswordAsync(user, updatePasswordDto.CurrentPassword, updatePasswordDto.NewPassword);
+
+            return result.Succeeded ? Result.Ok() : Result.Fail(new Error(result.Errors.First().Description));
+        }
+
         public async Task<TokenData> GenerateToken(ApplicationUser user)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
@@ -78,7 +99,8 @@ namespace FitnessGym.Application.Services.Identity
                     new Claim(JwtClaimTypes.BirthDate, user.DateOfBirth.ToString()),
                     new Claim(JwtClaimTypes.Gender, user.Gender.ToString()),
                     new Claim(JwtClaimTypes.Audience, _appOptions.Audience),
-                    new Claim(JwtClaimTypes.Issuer, _appOptions.Issuer)
+                    new Claim(JwtClaimTypes.Issuer, _appOptions.Issuer),
+                    new Claim(JwtClaimTypes.Picture, user.ProfilePicture),
                 }),
                 Expires = DateTime.UtcNow.AddMinutes(15),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(Encoding.ASCII.GetBytes(_appOptions.Key)), SecurityAlgorithms.HmacSha256Signature)
@@ -127,5 +149,6 @@ namespace FitnessGym.Application.Services.Identity
 
             return Result.Ok(newToken);
         }
+
     }
 }
