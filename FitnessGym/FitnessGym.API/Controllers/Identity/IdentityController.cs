@@ -53,7 +53,7 @@ namespace FitnessGym.API.Controllers.Identity
             string acceptLanguage = Request.Headers["Accept-Language"];
             var user = registerResult.Value;
             var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-            var confirmationLink = $"{_appOptions.BaseURL}/{acceptLanguage}/pages/confirm-email?email={user.Email}&token={token}";
+            var confirmationLink = $"{_appOptions.BaseURL}/{acceptLanguage}/confirm-email?email={user.Email}&token={token}";
             var conf = UriHelper.Encode(new Uri(confirmationLink));
 
             Result sendEmailResult;
