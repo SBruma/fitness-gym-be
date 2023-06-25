@@ -50,12 +50,6 @@ namespace FitnessGym.Infrastructure.Data
             builder.Entity<IdentityRole<Guid>>().HasData(
                 new IdentityRole<Guid>
                 {
-                    Id = new Guid("E1A7E842-A801-4492-9D79-DCCD67A9BBAC"),
-                    Name = Domain.Entities.Statics.Roles.Staff,
-                    NormalizedName = Domain.Entities.Statics.Roles.Staff.ToUpper()
-                },
-                new IdentityRole<Guid>
-                {
                     Id = new Guid("1F1E61A8-B164-43A9-8238-2902727852CE"),
                     Name = Domain.Entities.Statics.Roles.Member,
                     NormalizedName = Domain.Entities.Statics.Roles.Member.ToUpper()
@@ -75,8 +69,8 @@ namespace FitnessGym.Infrastructure.Data
                 new IdentityRole<Guid>
                 {
                     Id = new Guid("ADFC9C57-2D88-4ABD-9F8E-87774A6EB3FA"),
-                    Name = Domain.Entities.Statics.Roles.Tehnician,
-                    NormalizedName = Domain.Entities.Statics.Roles.Tehnician.ToUpper()
+                    Name = Domain.Entities.Statics.Roles.Technician,
+                    NormalizedName = Domain.Entities.Statics.Roles.Technician.ToUpper()
                 },
                 new IdentityRole<Guid>
                 {
@@ -89,55 +83,60 @@ namespace FitnessGym.Infrastructure.Data
 
         private void SeedStaff(ModelBuilder builder)
         {
+            var managerEmail = "manager@gym.director.com";
+            var receptionistEmail = "receptionist@gym.director.com";
+            var technicianEmail = "technician@gym.director.com";
+            var trainerEmail = "trainer@gym.director.com";
+
             var manager = new ApplicationUser
             {
                 Id = new Guid("8E721037-C9FC-4CA0-80DA-B414F5B72D36"),
-                UserName = "manager@gmail.com",
-                NormalizedUserName = "MANAGER@GMAIL.COM",
+                UserName = managerEmail,
+                NormalizedUserName = managerEmail.ToUpper(),
                 FirstName = "Jim",
                 LastName = "Cool",
-                Email = "manager@gmail.com",
+                Email = managerEmail,
                 DateOfBirth = new DateOnly(1990, 05, 20),
-                Gender = Domain.Entities.Enums.Gender.Male,
+                Gender = Gender.Male,
                 EmailConfirmed = true
             };
 
             var trainer = new ApplicationUser
             {
                 Id = new Guid("59BDBC09-57B2-426D-AAE9-DA830E0382A0"),
-                UserName = "trainer@gmail.com",
-                NormalizedUserName = "TRAINER@GMAIL.COM",
+                UserName = trainerEmail,
+                NormalizedUserName = trainerEmail.ToUpper(),
                 FirstName = "Costel",
                 LastName = "Bimius",
-                Email = "trainer@gmail.com",
+                Email = trainerEmail,
                 DateOfBirth = new DateOnly(1995, 08, 15),
-                Gender = Domain.Entities.Enums.Gender.Male,
+                Gender = Gender.Male,
                 EmailConfirmed = true,
             };
 
             var tehnician = new ApplicationUser
             {
                 Id = new Guid("34C33D5B-E131-4724-95EC-D97F0F4A494B"),
-                UserName = "tehnician@gmail.com",
-                NormalizedUserName = "TEHNICIAN@GMAIL.COM",
+                UserName = technicianEmail,
+                NormalizedUserName = technicianEmail.ToUpper(),
                 FirstName = "John",
                 LastName = "Geri",
-                Email = "tehnician@gmail.com",
+                Email = technicianEmail,
                 DateOfBirth = new DateOnly(1993, 02, 10),
-                Gender = Domain.Entities.Enums.Gender.Male,
+                Gender = Gender.Male,
                 EmailConfirmed = true,
             };
 
             var receptionist = new ApplicationUser
             {
                 Id = new Guid("8EA4FB46-51BC-415D-9EC0-013683D29411"),
-                UserName = "receptionist@gmail.com",
-                NormalizedUserName = "RECEPTIONIST@GMAIL.COM",
+                UserName = receptionistEmail,
+                NormalizedUserName = receptionistEmail.ToUpper(),
                 FirstName = "Miriam",
                 LastName = "Tuiar",
-                Email = "receptionist@gmail.com",
+                Email = receptionistEmail,
                 DateOfBirth = new DateOnly(2000, 08, 6),
-                Gender = Domain.Entities.Enums.Gender.Female,
+                Gender = Gender.Female,
                 EmailConfirmed = true,
             };
 
@@ -160,42 +159,22 @@ namespace FitnessGym.Infrastructure.Data
                    // Manager
                    new IdentityUserRole<Guid>
                    {
-                       RoleId = new Guid("E1A7E842-A801-4492-9D79-DCCD67A9BBAC"),
-                       UserId = new Guid("8E721037-C9FC-4CA0-80DA-B414F5B72D36")
-                   },
-                   new IdentityUserRole<Guid>
-                   {
                        RoleId = new Guid("FF98EC1B-2FFE-4A66-8436-9BAA85329F2C"),
                        UserId = new Guid("8E721037-C9FC-4CA0-80DA-B414F5B72D36")
                    },
                    // Trainer
                    new IdentityUserRole<Guid>
                    {
-                       RoleId = new Guid("E1A7E842-A801-4492-9D79-DCCD67A9BBAC"),
-                       UserId = new Guid("59BDBC09-57B2-426D-AAE9-DA830E0382A0")
-                   },
-                   new IdentityUserRole<Guid>
-                   {
                        RoleId = new Guid("43EC62F7-5AAE-4ED8-BFEF-C2DAA8E2E419"),
                        UserId = new Guid("59BDBC09-57B2-426D-AAE9-DA830E0382A0")
                    },
-                   // Tehnician
-                   new IdentityUserRole<Guid>
-                   {
-                       RoleId = new Guid("E1A7E842-A801-4492-9D79-DCCD67A9BBAC"),
-                       UserId = new Guid("34C33D5B-E131-4724-95EC-D97F0F4A494B")
-                   },
+                   // Technician
                    new IdentityUserRole<Guid>
                    {
                        RoleId = new Guid("43EC62F7-5AAE-4ED8-BFEF-C2DAA8E2E419"),
                        UserId = new Guid("34C33D5B-E131-4724-95EC-D97F0F4A494B")
                    },
                    // Receptionist
-                   new IdentityUserRole<Guid>
-                   {
-                       RoleId = new Guid("E1A7E842-A801-4492-9D79-DCCD67A9BBAC"),
-                       UserId = new Guid("8EA4FB46-51BC-415D-9EC0-013683D29411")
-                   },
                    new IdentityUserRole<Guid>
                    {
                        RoleId = new Guid("D5AFFFB8-B3BA-453B-A85D-FE736F59060D"),

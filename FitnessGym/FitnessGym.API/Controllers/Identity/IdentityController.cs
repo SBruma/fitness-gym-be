@@ -1,21 +1,22 @@
-﻿using FitnessGym.Application.Dtos.Gyms;
+﻿using FitnessGym.API.Configs;
+using FitnessGym.Application.Dtos.Gyms;
+using FitnessGym.Application.Dtos.Gyms.Create;
 using FitnessGym.Application.Dtos.Gyms.Update;
 using FitnessGym.Application.Dtos.Identity;
 using FitnessGym.Application.Options;
 using FitnessGym.Application.Services.Interfaces.Identity;
 using FitnessGym.Application.Services.Interfaces.Others;
 using FitnessGym.Domain.Entities.Identity;
+using FitnessGym.Domain.Entities.Statics;
 using FluentResults;
 using Google.Apis.Auth.OAuth2;
 using Google.Apis.Auth.OAuth2.Flows;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
 
 namespace FitnessGym.API.Controllers.Identity
 {
@@ -91,6 +92,57 @@ namespace FitnessGym.API.Controllers.Identity
             return sendEmailResult.IsSuccess ? Ok() : BadRequest(sendEmailResult.Reasons);
         }
 
+        [HttpPost]
+        [Authorize(Roles = $"{Roles.Manager},{Roles.Receptionist}")]
+        public async Task<IActionResult> AddMember(AddMemberDto addMemberDto)
+        {
+            var registerResult = await _identityService.Add(addMemberDto);
+
+            if (registerResult.IsFailed)
+            {
+                return BadRequest(registerResult.Reasons);
+            }
+
+            string acceptLanguage = Request.Headers["Accept-Language"];
+            var user = registerResult.Value;
+            var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+            var confirmationLink = $"{_appOptions.BaseURL}/{acceptLanguage}/confirm-email-and-password?email={user.Email}&token={token}";
+
+            Result sendEmailResult;
+
+            if (acceptLanguage == "ro")
+            {
+                sendEmailResult = _emailService.SendEmail(new MailData
+                {
+                    EmailSubject = "Completeaza contul",
+                    EmailBody = $"<h2>Confirma emailul si completeaza parola</h2><p>Draga {user.LastName} {user.FirstName},</p>" +
+                               $"<p>Multumim pentru inregistrare. Vă rugăm să faceți clic pe următorul link pentru a completa contul:</p>" +
+                               $"<p><a href=\"{confirmationLink}\">Click aici pentru a completa</a></p>",
+                    EmailToId = user.Email,
+                    EmailToName = $"{user.LastName} {user.FirstName}"
+                });
+            }
+            else
+            {
+                sendEmailResult = _emailService.SendEmail(new MailData
+                {
+                    EmailSubject = "Complete your account",
+                    EmailBody = $"<h2>Confirm your email and password</h2><p>Dear {user.LastName} {user.FirstName},</p>" +
+                               $"<p>Thank you for registering. Please click the following link to complete your account:</p>" +
+                               $"<p><a href=\"{confirmationLink}\">Click here to complete</a></p>",
+                    EmailToId = user.Email,
+                    EmailToName = $"{user.LastName} {user.FirstName}"
+                });
+            }
+
+            if (sendEmailResult.IsFailed)
+            {
+                await _userManager.DeleteAsync(user);
+            }
+
+            return sendEmailResult.IsSuccess ? Ok() : BadRequest(sendEmailResult.Reasons);
+        }
+
         [HttpPost("confirm-email")]
         public async Task<IActionResult> ConfirmEmail(ConfirmEmailDto confirmEmailDto)
         {
@@ -104,6 +156,28 @@ namespace FitnessGym.API.Controllers.Identity
             var cofirmEmailResult = await _userManager.ConfirmEmailAsync(user, confirmEmailDto.Token);
 
             return cofirmEmailResult.Succeeded ? Ok() : BadRequest();
+        }
+
+        [HttpPost("confirm-email-and-password")]
+        public async Task<IActionResult> ConfirmEmailAndPassword(ConfirmEmailAndPasswordDto confirmEmailAndPasswordDto)
+        {
+            var user = await _userManager.FindByEmailAsync(confirmEmailAndPasswordDto.Email);
+
+            if (user is null)
+            {
+                return BadRequest("Account isn't registered");
+            }
+
+            var cofirmEmailResult = await _userManager.ConfirmEmailAsync(user, confirmEmailAndPasswordDto.Token);
+
+            if (!cofirmEmailResult.Succeeded)
+            {
+                return BadRequest("Failed to confirm email");
+            }
+
+            var passwordUpdateResult = await _userManager.ChangePasswordAsync(user, $"_G{user.Email}14", confirmEmailAndPasswordDto.Password);
+
+            return passwordUpdateResult.Succeeded ? Ok() : BadRequest("Password couldn't be updated");
         }
 
         [HttpPost]

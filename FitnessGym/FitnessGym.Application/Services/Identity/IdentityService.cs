@@ -1,4 +1,5 @@
-﻿using FitnessGym.Application.Dtos.Gyms.Update;
+﻿using FitnessGym.Application.Dtos.Gyms.Create;
+using FitnessGym.Application.Dtos.Gyms.Update;
 using FitnessGym.Application.Dtos.Identity;
 using FitnessGym.Application.Errors;
 using FitnessGym.Application.Mappers;
@@ -62,6 +63,33 @@ namespace FitnessGym.Application.Services.Identity
 
             return registerResult.Succeeded && roleRegisterResult.Succeeded ?
                 Result.Ok(userAccount) : Result.Fail(new Error("Register failed"));
+        }
+
+        public async Task<Result<ApplicationUser>> Add(AddMemberDto addMemberDto)
+        {
+            var userAccount = _mapper.IdentityMapper.RegisterDtoToUser(addMemberDto);
+            userAccount.UserName = userAccount.Email;
+            var registerResult = await _userManager.CreateAsync(userAccount, $"_G{addMemberDto.Email}14");
+
+            if (!registerResult.Succeeded)
+            {
+                return Result.Fail(new Error("User couldn't be created"));
+            }
+
+            var user = await _userManager.FindByEmailAsync(userAccount.Email);
+
+            foreach (var role in addMemberDto.Roles)
+            {
+                var roleRegisterResult = await _userManager.AddToRoleAsync(userAccount, role);
+
+                if (!roleRegisterResult.Succeeded)
+                {
+                    await _userManager.DeleteAsync(user);
+                    return Result.Fail(new Error("Roles couldn't be added"));
+                }
+            }
+
+            return Result.Ok(user);
         }
 
         public async Task<Result<TokenData>> Update(UpdateUserDto updateUserDto, string email)
@@ -149,6 +177,5 @@ namespace FitnessGym.Application.Services.Identity
 
             return Result.Ok(newToken);
         }
-
     }
 }

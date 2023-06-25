@@ -20,7 +20,7 @@ namespace FitnessGym.API.Controllers.Gyms
         }
 
         [HttpGet]
-        [Authorize(Policy = Policies.StaffManager)]
+        [Authorize(Policy = Policies.Manager)]
         [ProducesResponseType(typeof(List<GymDto>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         public async Task<IActionResult> Get()
