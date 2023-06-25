@@ -31,6 +31,10 @@ namespace FitnessGym.Domain.Configurations.Members
                 .IsRequired(false);
             builder.Property(user => user.Gender)
                 .IsRequired();
+            builder.Property(user => user.AccesToken)
+                .IsRequired(false);
+            builder.Property(user => user.RefreshToken)
+                .IsRequired(false);
         }
     }
 }

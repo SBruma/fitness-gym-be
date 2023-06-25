@@ -54,6 +54,7 @@ namespace FitnessGym.Domain.Configurations.Gyms
 
             builder.OwnsOne(equipment => equipment.FloorLocation, floorLocation =>
             {
+                floorLocation.WithOwner();
                 floorLocation.Property(floorLocation => floorLocation.Row).IsRequired();
                 floorLocation.Property(floorLocation => floorLocation.Column).IsRequired();
             });

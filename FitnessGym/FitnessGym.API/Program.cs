@@ -16,7 +16,7 @@ builder.Services.AddControllers()
                 .AddJsonOptions(options =>
                 {
                     options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
-                }); ;
+                });
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(option =>
@@ -39,9 +39,23 @@ builder.Services.AddLocalization(options => options.ResourcesPath = "Resources")
 builder.Services.AddInfrastructure(builder.Configuration);
 builder.Services.AddApplication();
 builder.Services.ConfigureAuthenticationOptions(builder.Configuration);
+builder.Services.ConfigureAuthorizationOptions();
 
 builder.Host.UseSerilog((context, configuration) =>
     configuration.ReadFrom.Configuration(context.Configuration));
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowedOrigins",
+        policy =>
+        {
+            policy
+                .AllowAnyOrigin()
+                .AllowAnyHeader()
+                .AllowAnyMethod();
+        });
+});
+
 
 var app = builder.Build();
 
@@ -73,6 +87,7 @@ app.UseRequestLocalization(new RequestLocalizationOptions
     SupportedUICultures = supportedCultures
 });
 
+app.UseCors("AllowedOrigins");
 app.UseAuthentication();
 app.UseAuthorization();
 

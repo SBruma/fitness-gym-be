@@ -14,6 +14,7 @@ namespace FitnessGym.Domain.Entities.Members
         public ApplicationUser Member { get; set; }
         public GymId GymId { get; set; }
         public Gym Gym { get; set; }
+        public List<GymCheckIn> GymCheckIns { get; set; }
         public DateTime CreatedOnUtc { get; set; }
         public DateTime? ModifiedOnUtc { get; set; }
         public bool IsDeleted { get; set; }

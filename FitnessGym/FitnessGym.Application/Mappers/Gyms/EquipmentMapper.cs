@@ -28,6 +28,11 @@ namespace FitnessGym.Application.Mappers.Gyms
             return equipment;
         }
 
+        public List<Equipment> MapCreateEquipmentToEquipment(List<CreateEquipmentDto> dtos)
+        {
+            return dtos.Select(MapCreateEquipmentToEquipment).ToList();
+        }
+
         public EquipmentDto MapEquipmentToEquipmentDto(Equipment equipment)
         {
             var dto = EquipmentToEquipmentDto(equipment);

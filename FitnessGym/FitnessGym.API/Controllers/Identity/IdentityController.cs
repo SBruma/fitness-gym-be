@@ -1,10 +1,22 @@
-﻿using FitnessGym.Application.Dtos.Identity;
+﻿using FitnessGym.API.Configs;
+using FitnessGym.Application.Dtos.Gyms;
+using FitnessGym.Application.Dtos.Gyms.Create;
+using FitnessGym.Application.Dtos.Gyms.Update;
+using FitnessGym.Application.Dtos.Identity;
 using FitnessGym.Application.Options;
 using FitnessGym.Application.Services.Interfaces.Identity;
+using FitnessGym.Application.Services.Interfaces.Others;
+using FitnessGym.Domain.Entities.Identity;
+using FitnessGym.Domain.Entities.Statics;
+using FluentResults;
 using Google.Apis.Auth.OAuth2;
 using Google.Apis.Auth.OAuth2.Flows;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http.Extensions;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
+using System.IdentityModel.Tokens.Jwt;
 
 namespace FitnessGym.API.Controllers.Identity
 {
@@ -13,21 +25,159 @@ namespace FitnessGym.API.Controllers.Identity
     public class IdentityController : ControllerBase
     {
         private readonly IIdentityService _identityService;
+        private readonly IEmailService _emailService;
         private readonly AppOptions _appOptions;
+        private readonly UserManager<ApplicationUser> _userManager;
 
-        public IdentityController(IIdentityService identityService, IOptionsSnapshot<AppOptions> appOptions)
+        public IdentityController(IIdentityService identityService,
+                                    IOptionsSnapshot<AppOptions> appOptions,
+                                    UserManager<ApplicationUser> userManager,
+                                    IEmailService emailService)
         {
             _identityService = identityService;
             _appOptions = appOptions.Value;
+            _userManager = userManager;
+            _emailService = emailService;
         }
 
         [HttpPost]
         [Route("register")]
         public async Task<IActionResult> CreateAccount(RegisterDto registerDto)
         {
-            var result = await _identityService.Register(registerDto);
+            var registerResult = await _identityService.Register(registerDto);
 
-            return result.IsSuccess ? Ok() : BadRequest();
+            if (registerResult.IsFailed)
+            {
+                return BadRequest("Email already registered");
+            }
+
+            string acceptLanguage = Request.Headers["Accept-Language"];
+            var user = registerResult.Value;
+            var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+            var confirmationLink = $"{_appOptions.BaseURL}/{acceptLanguage}/confirm-email?email={user.Email}&token={token}";
+            var conf = UriHelper.Encode(new Uri(confirmationLink));
+
+            Result sendEmailResult;
+
+            if (acceptLanguage == "ro")
+            {
+                sendEmailResult = _emailService.SendEmail(new MailData
+                {
+                    EmailSubject = "Confirma emailul",
+                    EmailBody = $"<h2>Confirma emailul</h2><p>Draga {user.LastName} {user.FirstName},</p>" +
+                               $"<p>Multumim pentru inregistrare. Vă rugăm să faceți clic pe următorul link pentru a vă confirma e-mailul:</p>" +
+                               $"<p><a href=\"{confirmationLink}\">Click aici pentru a confirma</a></p>",
+                    EmailToId = user.Email,
+                    EmailToName = $"{user.LastName} {user.FirstName}"
+                });
+            }
+            else
+            {
+                sendEmailResult = _emailService.SendEmail(new MailData
+                {
+                    EmailSubject = "Confirm your email",
+                    EmailBody = $"<h2>Confirm your email</h2><p>Dear {user.LastName} {user.FirstName},</p>" +
+                               $"<p>Thank you for registering. Please click the following link to confirm your email:</p>" +
+                               $"<p><a href=\"{confirmationLink}\">Click here to confirm</a></p>",
+                    EmailToId = user.Email,
+                    EmailToName = $"{user.LastName} {user.FirstName}"
+                });
+            }
+
+            if (sendEmailResult.IsFailed)
+            {
+                await _userManager.DeleteAsync(user);
+            }
+
+            return sendEmailResult.IsSuccess ? Ok() : BadRequest(sendEmailResult.Reasons);
+        }
+
+        [HttpPost]
+        [Authorize(Roles = $"{Roles.Manager},{Roles.Receptionist}")]
+        public async Task<IActionResult> AddMember(AddMemberDto addMemberDto)
+        {
+            var registerResult = await _identityService.Add(addMemberDto);
+
+            if (registerResult.IsFailed)
+            {
+                return BadRequest(registerResult.Reasons);
+            }
+
+            string acceptLanguage = Request.Headers["Accept-Language"];
+            var user = registerResult.Value;
+            var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+            var confirmationLink = $"{_appOptions.BaseURL}/{acceptLanguage}/confirm-email-and-password?email={user.Email}&token={token}";
+
+            Result sendEmailResult;
+
+            if (acceptLanguage == "ro")
+            {
+                sendEmailResult = _emailService.SendEmail(new MailData
+                {
+                    EmailSubject = "Completeaza contul",
+                    EmailBody = $"<h2>Confirma emailul si completeaza parola</h2><p>Draga {user.LastName} {user.FirstName},</p>" +
+                               $"<p>Multumim pentru inregistrare. Vă rugăm să faceți clic pe următorul link pentru a completa contul:</p>" +
+                               $"<p><a href=\"{confirmationLink}\">Click aici pentru a completa</a></p>",
+                    EmailToId = user.Email,
+                    EmailToName = $"{user.LastName} {user.FirstName}"
+                });
+            }
+            else
+            {
+                sendEmailResult = _emailService.SendEmail(new MailData
+                {
+                    EmailSubject = "Complete your account",
+                    EmailBody = $"<h2>Confirm your email and password</h2><p>Dear {user.LastName} {user.FirstName},</p>" +
+                               $"<p>Thank you for registering. Please click the following link to complete your account:</p>" +
+                               $"<p><a href=\"{confirmationLink}\">Click here to complete</a></p>",
+                    EmailToId = user.Email,
+                    EmailToName = $"{user.LastName} {user.FirstName}"
+                });
+            }
+
+            if (sendEmailResult.IsFailed)
+            {
+                await _userManager.DeleteAsync(user);
+            }
+
+            return sendEmailResult.IsSuccess ? Ok() : BadRequest(sendEmailResult.Reasons);
+        }
+
+        [HttpPost("confirm-email")]
+        public async Task<IActionResult> ConfirmEmail(ConfirmEmailDto confirmEmailDto)
+        {
+            var user = await _userManager.FindByEmailAsync(confirmEmailDto.Email);
+
+            if (user is null)
+            {
+                return BadRequest();
+            }
+
+            var cofirmEmailResult = await _userManager.ConfirmEmailAsync(user, confirmEmailDto.Token);
+
+            return cofirmEmailResult.Succeeded ? Ok() : BadRequest();
+        }
+
+        [HttpPost("confirm-email-and-password")]
+        public async Task<IActionResult> ConfirmEmailAndPassword(ConfirmEmailAndPasswordDto confirmEmailAndPasswordDto)
+        {
+            var user = await _userManager.FindByEmailAsync(confirmEmailAndPasswordDto.Email);
+
+            if (user is null)
+            {
+                return BadRequest("Account isn't registered");
+            }
+
+            var cofirmEmailResult = await _userManager.ConfirmEmailAsync(user, confirmEmailAndPasswordDto.Token);
+
+            if (!cofirmEmailResult.Succeeded)
+            {
+                return BadRequest("Failed to confirm email");
+            }
+
+            var passwordUpdateResult = await _userManager.ChangePasswordAsync(user, $"_G{user.Email}14", confirmEmailAndPasswordDto.Password);
+
+            return passwordUpdateResult.Succeeded ? Ok() : BadRequest("Password couldn't be updated");
         }
 
         [HttpPost]
@@ -36,7 +186,33 @@ namespace FitnessGym.API.Controllers.Identity
         {
             var result = await _identityService.Login(loginDto);
 
-            return result.IsSuccess ? Ok(result.Value) : BadRequest();
+            return result.IsSuccess ? Ok(result.Value) : BadRequest(result.Reasons);
+        }
+
+        [HttpGet("refresh-token")]
+        public async Task<IActionResult> RefreshToken([FromQuery] string refreshToken, [FromQuery] string accessToken)
+        {
+            var newTokenResult = await _identityService.RefreshToken(new TokenData { AccessToken = accessToken, RefreshToken = refreshToken });
+
+            return newTokenResult.IsSuccess ? Ok(newTokenResult.Value) : BadRequest();
+        }
+
+        [HttpPut]
+        [Authorize]
+        public async Task<IActionResult> Update(UpdateUserDto dto)
+        {
+            var result = await _identityService.Update(dto, GetEmailFromToken());
+
+            return result.IsSuccess ? Ok(result.Value) : BadRequest(result.Reasons);
+        }
+
+        [HttpPut("change-password")]
+        [Authorize]
+        public async Task<IActionResult> ChangePassword(UpdatePasswordDto updatePasswordDto)
+        {
+            var result = await _identityService.UpdatePassword(updatePasswordDto, GetEmailFromToken());
+
+            return result.IsSuccess ? Ok(result) : BadRequest(result.Reasons);
         }
 
         [HttpGet]
@@ -52,9 +228,33 @@ namespace FitnessGym.API.Controllers.Identity
                 JwtToken = tokenResponse.IdToken,
                 RefreshToken = tokenResponse.RefreshToken
             };
-            // logica back end create cont
-            //use datastore
-            return Ok(googleToken.AccessToken);
+
+            var userInfo = await GetGoogleUserInfo(googleToken.AccessToken);
+            var applicationUser = await _userManager.FindByEmailAsync(userInfo.Email);
+
+            if (applicationUser is null)
+            {
+                applicationUser = new ApplicationUser
+                {
+                    LastName = userInfo.Family_Name,
+                    FirstName = userInfo.Given_Name,
+                    Email = userInfo.Email,
+                    EmailConfirmed = userInfo.Email_Verified,
+                    UserName = userInfo.Email,
+                    DateOfBirth = new DateOnly()
+                };
+                var createUser = await _userManager.CreateAsync(applicationUser);
+
+                if (!createUser.Succeeded)
+                {
+                    return BadRequest();
+                }
+            }
+
+            await _userManager.SetAuthenticationTokenAsync(applicationUser, "Google", "access_token", googleToken.JwtToken);
+            //await _userManager.SetAuthenticationTokenAsync(applicationUser, "Google", "refresh_token", googleToken.RefreshToken);
+
+            return Ok(_identityService.GenerateToken(applicationUser));
         }
 
         [HttpGet]
@@ -96,9 +296,35 @@ namespace FitnessGym.API.Controllers.Identity
                 {
                     "https://www.googleapis.com/auth/userinfo.email",
                     "https://www.googleapis.com/auth/userinfo.profile",
-                    "openid",
+                    "openid"
                 }
             });
+        }
+
+        private async Task<GoogleUserInfo> GetGoogleUserInfo(string accessToken)
+        {
+            var httpClient = new HttpClient();
+            httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", accessToken);
+
+            var response = await httpClient.GetAsync("https://www.googleapis.com/oauth2/v3/userinfo");
+            if (response.IsSuccessStatusCode)
+            {
+                var content = await response.Content.ReadAsStringAsync();
+                var userInfo = Newtonsoft.Json.JsonConvert.DeserializeObject<GoogleUserInfo>(content);
+
+                return userInfo;
+            }
+
+            // Handle error case if the request fails
+            throw new Exception("Failed to retrieve user information from Google.");
+        }
+
+        private string GetEmailFromToken()
+        {
+            string token = HttpContext.Request.Headers["Authorization"].ToString().Substring("Bearer ".Length);
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var jwtToken = tokenHandler.ReadJwtToken(token);
+            return jwtToken.Claims.FirstOrDefault(c => c.Type == "email")?.Value;
         }
     }
 }

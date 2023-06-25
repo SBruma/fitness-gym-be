@@ -1,4 +1,5 @@
-﻿using FitnessGym.Application.Dtos.Gyms;
+﻿using FitnessGym.Application.Dtos;
+using FitnessGym.Application.Dtos.Gyms;
 using FitnessGym.Application.Dtos.Gyms.Create;
 using FitnessGym.Application.Errors;
 using FitnessGym.Application.Mappers;
@@ -10,8 +11,6 @@ using FitnessGym.Infrastructure.Data.Interfaces;
 using FluentResults;
 using IronBarCode;
 using Microsoft.AspNetCore.Identity;
-using System;
-using System.Text.Json;
 using Result = FluentResults.Result;
 
 namespace FitnessGym.Application.Services.Gyms
@@ -85,7 +84,7 @@ namespace FitnessGym.Application.Services.Gyms
 
             foreach (var item in membershipHistoryResult.Value)
             {
-                if (item != membershipHistoryResult.Value.First())
+                if (item.ExpirationDate < DateTime.UtcNow)
                 {
                     item.QRCode = new QRCode(new byte[0]);
                 }
@@ -109,7 +108,74 @@ namespace FitnessGym.Application.Services.Gyms
                                             Result.Fail(new NotFoundError(typeof(Membership)));
         }
 
-        public byte[] GenerateQRCode(string text)
+        public async Task<Result<GymCheckInDto>> CheckInOut(QRCodeCheckInOutDto dto)
+        {
+            var membershipId = new MembershipId(dto.QRCodeId);
+            var getActiveCheckInResult = await _unitOfWork.GymCheckInRepository.GetActive(membershipId);
+
+            if (getActiveCheckInResult.IsFailed)
+            {
+                var checkIn = new GymCheckIn
+                {
+                    CheckInTime = DateTime.UtcNow,
+                    MembershipId = membershipId,
+                    CheckOutTime = null
+                };
+
+                await _unitOfWork.GymCheckInRepository.Add(checkIn);
+                var createResult = await _unitOfWork.SaveChangesAsync();
+
+                if (createResult.IsSuccess)
+                {
+                    return Result.Ok(new GymCheckInDto
+                    {
+                        Id = checkIn.Id,
+                        CheckInTime = checkIn.CheckInTime,
+                        CheckOutTime = null
+                    });
+                }
+            }
+
+            var activeCheckIn = getActiveCheckInResult.Value;
+            var minimumTime = activeCheckIn.CheckInTime.AddSeconds(30);
+            if (DateTime.UtcNow < minimumTime)
+            {
+                return Result.Fail(new Error("Wait atleast 2 minutes"));
+            }
+
+            activeCheckIn.CheckOutTime = DateTime.UtcNow;
+            _unitOfWork.GymCheckInRepository.Update(activeCheckIn);
+            await _unitOfWork.SaveChangesAsync();
+
+            return Result.Ok(new GymCheckInDto
+            {
+                Id = activeCheckIn.Id,
+                CheckInTime = activeCheckIn.CheckInTime,
+                CheckOutTime = activeCheckIn.CheckOutTime
+            });
+        }
+
+        public async Task<Result<List<GymCheckInHistoryDto>>> GetCheckInOutHistory(DateTime minimumDate, GymId gymId)
+        {
+            var checkInsHistoryResult = await _unitOfWork.GymCheckInRepository.GetHistory(minimumDate, gymId);
+
+            return checkInsHistoryResult.IsSuccess ? checkInsHistoryResult.Value.Select(checkiIn => new GymCheckInHistoryDto
+            {
+                Id = checkiIn.Id,
+                CheckInTime = checkiIn.CheckInTime,
+                CheckOutTime = checkiIn.CheckOutTime,
+                Email = checkiIn.Membership.Member.Email
+            }).ToList() : Result.Fail(checkInsHistoryResult.Errors.First());
+        }
+
+        public async Task<Result<int>> GetMembersInGym(GymId gymId)
+        {
+            var getMembersInGymResult = await _unitOfWork.GymCheckInRepository.GetMembersInGym(gymId);
+
+            return Result.Ok(getMembersInGymResult.Value);
+        }
+
+        private byte[] GenerateQRCode(string text)
         {
             var QRCode = QRCodeWriter.CreateQrCode(text, 200);
 
@@ -124,7 +190,7 @@ namespace FitnessGym.Application.Services.Gyms
                 Id = membership.Id.Value
             };
 
-            return JsonSerializer.Serialize(QRCodeData);
+            return System.Text.Json.JsonSerializer.Serialize(QRCodeData);
         }
     }
 }

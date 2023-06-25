@@ -16,4 +16,8 @@
     <ProjectReference Include="..\Utils\Utils.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Entities\Statics\" />
+  </ItemGroup>
+
 </Project>
