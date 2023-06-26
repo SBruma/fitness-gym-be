@@ -12,6 +12,7 @@ namespace FitnessGym.Domain.Filters
         public DateOnly? PurchaseDate { get; set; } = null;
         public DateOnly? WarrantyExpirationDate { get; set; } = null;
         public Guid? GymId { get; set; } = null;
+        public string? Name { get; set; } = null;
 
         public Expression<Func<Equipment, bool>> GetQuery()
         {
@@ -41,6 +42,11 @@ namespace FitnessGym.Domain.Filters
             {
                 var gymId = new GymId(GymId.Value);
                 query = query.And(equipment => equipment.GymId == gymId);
+            }
+
+            if (Name is not null)
+            {
+                query = query.And(equipment => equipment.Name.ToLower().Contains(Name.ToLower()));
             }
 
             return query;

@@ -3,9 +3,8 @@
     public enum EquipmentStatus
     {
         Available,
-        InUse,
         NeedMaintenance,
-        UnderMainetance,
+        UnderMaintenance,
         OutOfOrder
     }
 }
