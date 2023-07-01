@@ -60,5 +60,21 @@ namespace FitnessGym.Infrastructure.Repositories.Gyms
 
             return Result.Ok(count);
         }
+
+        public async Task<bool> CheckOutJob()
+        {
+            var overTimeCheckIns = await _dbSet.Where(x => DateTime.UtcNow > x.CheckInTime.AddHours(5)
+                                                        && x.CheckOutTime == null)
+                                                .ToListAsync();
+
+            foreach (var checkIn in overTimeCheckIns)
+            {
+                checkIn.CheckOutTime = DateTime.UtcNow;
+            }
+
+            _dbSet.UpdateRange(overTimeCheckIns);
+
+            return overTimeCheckIns.Any();
+        }
     }
 }

@@ -1,9 +1,17 @@
 using FitnessGym.API.Configs;
 using FitnessGym.API.Headers;
 using FitnessGym.Application;
+using FitnessGym.Application.Services.Others;
 using FitnessGym.Infrastructure;
+using FitnessGym.Infrastructure.Data;
+using FitnessGym.Infrastructure.Data.Interfaces;
+using Hangfire;
+using Hangfire.Common;
+using Hangfire.PostgreSql;
 using Microsoft.AspNetCore.Localization;
+using Microsoft.Extensions.Configuration;
 using Serilog;
+using SixLabors.ImageSharp;
 using System.Globalization;
 using System.Text.Json.Serialization;
 
@@ -40,6 +48,7 @@ builder.Services.AddInfrastructure(builder.Configuration);
 builder.Services.AddApplication();
 builder.Services.ConfigureAuthenticationOptions(builder.Configuration);
 builder.Services.ConfigureAuthorizationOptions();
+builder.Services.ConfigureHangFireOptions(builder.Configuration);
 
 builder.Host.UseSerilog((context, configuration) =>
     configuration.ReadFrom.Configuration(context.Configuration));
@@ -72,8 +81,9 @@ if (app.Environment.IsDevelopment())
         //options.OAuthUsePkce();
         options.OAuth2RedirectUrl("https://localhost:7270/api/Identity/signin-google");
     });
-}
 
+    app.UseHangfireDashboard();
+}
 app.UseSerilogRequestLogging();
 
 app.UseHttpsRedirection();
@@ -90,6 +100,12 @@ app.UseRequestLocalization(new RequestLocalizationOptions
 app.UseCors("AllowedOrigins");
 app.UseAuthentication();
 app.UseAuthorization();
+
+using (var scope = app.Services.CreateScope())
+{
+    var hangfireJobService = scope.ServiceProvider.GetRequiredService<HangFireService>();
+    //hangfireJobService.StartJobsAsync();
+}
 
 //app.UseIdentityServer();
 app.MapControllers();

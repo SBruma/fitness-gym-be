@@ -9,5 +9,6 @@ namespace FitnessGym.Infrastructure.Repositories.Interfaces.Gyms
         Task<Result<GymCheckIn>> GetActive(MembershipId membershipId);
         Task<Result<List<GymCheckIn>>> GetHistory(DateTime minimumDate, GymId gymId);
         Task<Result<int>> GetMembersInGym(GymId gymId);
+        Task<bool> CheckOutJob();
     }
 }

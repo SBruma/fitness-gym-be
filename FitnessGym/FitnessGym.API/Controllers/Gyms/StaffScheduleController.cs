@@ -26,20 +26,20 @@ namespace FitnessGym.API.Controllers.Gyms
             return result.IsSuccess ? Ok(result.Value) : BadRequest(result.Reasons);
         }
 
-        [HttpGet]
+        [HttpGet("{id}")]
         [ProducesResponseType(typeof(StaffScheduleDto), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
-        public async Task<IActionResult> Get([FromQuery] Guid staffId)
+        public async Task<IActionResult> Get(Guid staffId)
         {
             var result = await _staffScheduleService.GetStaffSchedule(staffId);
 
             return result.IsSuccess ? Ok(result.Value) : NotFound();
         }
 
-        [HttpPut]
+        [HttpPut("{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> Update([FromQuery] Guid staffId, [FromBody] UpdateStaffSchedule updateStaffSchedule)
+        public async Task<IActionResult> Update(Guid staffId, [FromBody] UpdateStaffSchedule updateStaffSchedule)
         {
             var result = await _staffScheduleService.UpdateSchedule(staffId, updateStaffSchedule);
 

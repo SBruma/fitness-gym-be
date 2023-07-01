@@ -140,7 +140,7 @@ namespace FitnessGym.Application.Services.Gyms
             var minimumTime = activeCheckIn.CheckInTime.AddSeconds(30);
             if (DateTime.UtcNow < minimumTime)
             {
-                return Result.Fail(new Error("Wait atleast 2 minutes"));
+                return Result.Fail(new Error("Wait atleast 30 seconds"));
             }
 
             activeCheckIn.CheckOutTime = DateTime.UtcNow;
