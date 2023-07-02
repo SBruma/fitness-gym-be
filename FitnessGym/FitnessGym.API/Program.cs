@@ -82,6 +82,7 @@ if (app.Environment.IsDevelopment())
         options.OAuth2RedirectUrl("https://localhost:7270/api/Identity/signin-google");
     });
 
+    app.ApplyMigrations();
     app.UseHangfireDashboard();
 }
 app.UseSerilogRequestLogging();
@@ -104,7 +105,6 @@ app.UseAuthorization();
 using (var scope = app.Services.CreateScope())
 {
     var hangfireJobService = scope.ServiceProvider.GetRequiredService<HangFireService>();
-    //hangfireJobService.StartJobsAsync();
 }
 
 //app.UseIdentityServer();

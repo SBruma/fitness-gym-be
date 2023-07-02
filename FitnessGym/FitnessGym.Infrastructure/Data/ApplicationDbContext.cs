@@ -25,6 +25,58 @@ namespace FitnessGym.Infrastructure.Data
             SeedStaff(builder);
             SeedStaffRoles(builder);
             base.OnModelCreating(builder);
+
+            builder.Entity<Gym>(gym =>
+            {
+                gym.HasData(new
+                {
+                    Id = new GymId(new Guid("C90E6F32-1B5D-48C9-9F91-0F099C3B3DF6")),
+                    Name = "USV Student Gym",
+                    PhoneNumber = "+7-123-4567",
+                    EmailAddress = "gym.director@gym.usv.ro",
+                    CreatedOnUtc = DateTime.UtcNow
+                });
+
+                gym.OwnsOne(gym => gym.Address).HasData(new
+                {
+                    GymId = new GymId(new Guid("C90E6F32-1B5D-48C9-9F91-0F099C3B3DF6")),
+                    Street = "Strada Universității",
+                    City = "Suceava",
+                    Country = "Romania",
+                    BuildingNumber = "13"
+                });
+
+                gym.OwnsOne(gym => gym.GeoCoordinate).HasData(new
+                {
+                    GymId = new GymId(new Guid("C90E6F32-1B5D-48C9-9F91-0F099C3B3DF6")),
+                    Latitude = 47.640958m,
+                    Longitude = 26.243436m
+                });
+
+                gym.OwnsOne(gym => gym.Layout).HasData(new
+                {
+                    GymId = new GymId(new Guid("C90E6F32-1B5D-48C9-9F91-0F099C3B3DF6")),
+                    Length = 15,
+                    Width = 12,
+                    FloorNumber = 2
+                });
+            });
+
+            var floor0 = new Floor
+            {
+                GymId = new GymId(new Guid("C90E6F32-1B5D-48C9-9F91-0F099C3B3DF6")),
+                Level = 0,
+                CreatedOnUtc = DateTime.UtcNow
+            };
+
+            var floor1 = new Floor
+            {
+                GymId = new GymId(new Guid("C90E6F32-1B5D-48C9-9F91-0F099C3B3DF6")),
+                Level = 1,
+                CreatedOnUtc = DateTime.UtcNow
+            };
+
+            builder.Entity<Floor>().HasData(floor0, floor1);
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)

@@ -12,8 +12,8 @@ namespace FitnessGym.Application.Services.Others
         public HangFireService(IServiceScopeFactory serviceScopeFactory)
         {
             _serviceScopeFactory = serviceScopeFactory;
-            RecurringJob.AddOrUpdate("membershipCheckOutJob", () => StartCheckOutValidationJobAsync(), Cron.Minutely);
-            RecurringJob.AddOrUpdate("equipmentWarrantyCheckJob", () => StartWarrantyValdiationJobsAsync(), Cron.Minutely);
+            RecurringJob.AddOrUpdate("membershipCheckOutJob", () => StartCheckOutValidationJobAsync(), Cron.Hourly);
+            RecurringJob.AddOrUpdate("equipmentWarrantyCheckJob", () => StartWarrantyValdiationJobsAsync(), Cron.Hourly);
         }
 
         public async Task StartCheckOutValidationJobAsync()

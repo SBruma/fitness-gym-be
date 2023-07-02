@@ -41,6 +41,7 @@ namespace FitnessGym.Domain.Configurations.Gyms
 
             builder.OwnsOne(gym => gym.Address, gym =>
             {
+                gym.WithOwner();
                 gym.Property(adress => adress.Country).IsRequired();
                 gym.Property(adress => adress.City).IsRequired();
                 gym.Property(adress => adress.Street).IsRequired();

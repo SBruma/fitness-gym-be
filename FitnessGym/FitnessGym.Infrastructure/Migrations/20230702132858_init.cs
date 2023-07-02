@@ -405,11 +405,16 @@ namespace FitnessGym.Infrastructure.Migrations
                 columns: new[] { "Id", "AccesToken", "AccessFailedCount", "ConcurrencyStamp", "CreatedOnUtc", "DateOfBirth", "Email", "EmailConfirmed", "EmergencyPhoneNumber", "FirstName", "Gender", "LastName", "LockoutEnabled", "LockoutEnd", "ModifiedOnUtc", "NormalizedEmail", "NormalizedUserName", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "ProfilePicture", "RefreshToken", "SecurityStamp", "TwoFactorEnabled", "UserName" },
                 values: new object[,]
                 {
-                    { new Guid("34c33d5b-e131-4724-95ec-d97f0f4a494b"), "", 0, "e6d5ee20-aa82-4677-8117-0889f370dd9d", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateOnly(1993, 2, 10), "technician@gym.director.com", true, null, "John", 0, "Geri", false, null, null, null, "TECHNICIAN@GYM.DIRECTOR.COM", "AQAAAAIAAYagAAAAECYxmErMSiKI5VomqsWYXI3WXDY/fVIvXubcURFv7zfmLSQFHnz4mOzqnqdO77aitw==", null, false, "/images/avatars/1.png", "", "cc10a5c0-5683-4722-ba7d-2611955115ec", false, "technician@gym.director.com" },
-                    { new Guid("59bdbc09-57b2-426d-aae9-da830e0382a0"), "", 0, "2edfa390-9a8d-4f57-ad63-9852b37e9b94", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateOnly(1995, 8, 15), "trainer@gym.director.com", true, null, "Costel", 0, "Bimius", false, null, null, null, "TRAINER@GYM.DIRECTOR.COM", "AQAAAAIAAYagAAAAENZbfEuWWI/RNCj0lA2Q6vgpn27zFjB+qRP8DBW2FxkWsBJL2Zv1vxjalZG750/GmA==", null, false, "/images/avatars/1.png", "", "28570adb-d461-4a19-8492-7ff3985b1604", false, "trainer@gym.director.com" },
-                    { new Guid("8e721037-c9fc-4ca0-80da-b414f5b72d36"), "", 0, "a3aa84b6-0253-41b9-a21b-55bbe94aaa18", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateOnly(1990, 5, 20), "manager@gym.director.com", true, null, "Jim", 0, "Cool", false, null, null, null, "MANAGER@GYM.DIRECTOR.COM", "AQAAAAIAAYagAAAAEFbRbJbmu8nYxvSs23FRda+J00tLZzHNToHhMOvEqYAHhkQu8J2vqQQXRAzcvfnLJA==", null, false, "/images/avatars/1.png", "", "355a198b-0bb2-4903-9117-5777c05516af", false, "manager@gym.director.com" },
-                    { new Guid("8ea4fb46-51bc-415d-9ec0-013683d29411"), "", 0, "d894bce4-3544-430c-8dcc-a19d3c819624", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateOnly(2000, 8, 6), "receptionist@gym.director.com", true, null, "Miriam", 1, "Tuiar", false, null, null, null, "RECEPTIONIST@GYM.DIRECTOR.COM", "AQAAAAIAAYagAAAAEM9CeFjYj6oyt1/UWh0OeZ0/GIiUbsVOSz7zryGVnPqHa7kK+dIbvPOdek0hYHw75w==", null, false, "/images/avatars/1.png", "", "27cb06f0-6ee2-407a-8dc1-537cebe8371d", false, "receptionist@gym.director.com" }
+                    { new Guid("34c33d5b-e131-4724-95ec-d97f0f4a494b"), "", 0, "86702e4a-c234-48b9-a09a-a5272937124c", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateOnly(1993, 2, 10), "technician@gym.director.com", true, null, "John", 0, "Geri", false, null, null, null, "TECHNICIAN@GYM.DIRECTOR.COM", "AQAAAAIAAYagAAAAEEwcmtnIXnfrr3BdvcU/i/cBkkzZ7Z6+IE6mDOwiDHJ0zP+oMhuJdCGvTcpeNUQrWw==", null, false, "/images/avatars/1.png", "", "3bc41318-90e0-46de-a7d4-da90b36f70c9", false, "technician@gym.director.com" },
+                    { new Guid("59bdbc09-57b2-426d-aae9-da830e0382a0"), "", 0, "f5c4d706-c91e-413a-aa2d-1936a71398f8", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateOnly(1995, 8, 15), "trainer@gym.director.com", true, null, "Costel", 0, "Bimius", false, null, null, null, "TRAINER@GYM.DIRECTOR.COM", "AQAAAAIAAYagAAAAEDMhZ1mFEcvecjSOtXvYQ7/JFuFKY+0hYhCAs8s+cMKLfTeT9Gtyfa6JeLDXjrN25Q==", null, false, "/images/avatars/1.png", "", "8bb891ba-d74c-4885-88e4-4667f9acf1ed", false, "trainer@gym.director.com" },
+                    { new Guid("8e721037-c9fc-4ca0-80da-b414f5b72d36"), "", 0, "52f849ea-a465-4ccc-b6ad-469bad9a8079", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateOnly(1990, 5, 20), "manager@gym.director.com", true, null, "Jim", 0, "Cool", false, null, null, null, "MANAGER@GYM.DIRECTOR.COM", "AQAAAAIAAYagAAAAEMrpjHtK0uWp7pyXbx9apptpQXudWZZXoaJBSF9o8IWN/J20XfGTrvUnQzhhiwPF6w==", null, false, "/images/avatars/1.png", "", "4038f877-e958-4426-b087-56ee1a8434d0", false, "manager@gym.director.com" },
+                    { new Guid("8ea4fb46-51bc-415d-9ec0-013683d29411"), "", 0, "abba2800-912b-467b-a22f-c933fd0af0a7", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateOnly(2000, 8, 6), "receptionist@gym.director.com", true, null, "Miriam", 1, "Tuiar", false, null, null, null, "RECEPTIONIST@GYM.DIRECTOR.COM", "AQAAAAIAAYagAAAAELStq/iLbrwKq9wPLGbd9ZDxURTY2ReIWJvqkmkffUBzb2qojXAfeolrwXve+IUz3w==", null, false, "/images/avatars/1.png", "", "a2054e90-59ad-49ed-a88e-ec3d786dba33", false, "receptionist@gym.director.com" }
                 });
+
+            migrationBuilder.InsertData(
+                table: "Gyms",
+                columns: new[] { "Id", "Address_BuildingNumber", "Address_City", "Address_Country", "Address_Street", "GeoCoordinate_Latitude", "GeoCoordinate_Longitude", "CreatedOnUtc", "EmailAddress", "ModifiedOnUtc", "Name", "PhoneNumber", "Layout_FloorNumber", "Layout_Length", "Layout_Width" },
+                values: new object[] { new Guid("c90e6f32-1b5d-48c9-9f91-0f099c3b3df6"), "13", "Suceava", "Romania", "Strada Universității", 47.640958m, 26.243436m, new DateTime(2023, 7, 2, 13, 28, 58, 137, DateTimeKind.Utc).AddTicks(2550), "gym.director@gym.usv.ro", null, "USV Student Gym", "+7-123-4567", 2, 15, 12 });
 
             migrationBuilder.InsertData(
                 table: "AspNetUserRoles",
@@ -420,6 +425,15 @@ namespace FitnessGym.Infrastructure.Migrations
                     { new Guid("43ec62f7-5aae-4ed8-bfef-c2daa8e2e419"), new Guid("59bdbc09-57b2-426d-aae9-da830e0382a0") },
                     { new Guid("ff98ec1b-2ffe-4a66-8436-9baa85329f2c"), new Guid("8e721037-c9fc-4ca0-80da-b414f5b72d36") },
                     { new Guid("d5afffb8-b3ba-453b-a85d-fe736f59060d"), new Guid("8ea4fb46-51bc-415d-9ec0-013683d29411") }
+                });
+
+            migrationBuilder.InsertData(
+                table: "Floors",
+                columns: new[] { "GymId", "Level", "CreatedOnUtc", "ModifiedOnUtc" },
+                values: new object[,]
+                {
+                    { new Guid("c90e6f32-1b5d-48c9-9f91-0f099c3b3df6"), 0, new DateTime(2023, 7, 2, 13, 28, 58, 137, DateTimeKind.Utc).AddTicks(3223), null },
+                    { new Guid("c90e6f32-1b5d-48c9-9f91-0f099c3b3df6"), 1, new DateTime(2023, 7, 2, 13, 28, 58, 137, DateTimeKind.Utc).AddTicks(3225), null }
                 });
 
             migrationBuilder.CreateIndex(

@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace FitnessGym.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20230624154111_init")]
+    [Migration("20230702132858_init")]
     partial class init
     {
         /// <inheritdoc />
@@ -117,6 +117,22 @@ namespace FitnessGym.Infrastructure.Migrations
                         .IsUnique();
 
                     b.ToTable("Floors", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            GymId = new Guid("c90e6f32-1b5d-48c9-9f91-0f099c3b3df6"),
+                            Level = 0,
+                            CreatedOnUtc = new DateTime(2023, 7, 2, 13, 28, 58, 137, DateTimeKind.Utc).AddTicks(3223),
+                            IsDeleted = false
+                        },
+                        new
+                        {
+                            GymId = new Guid("c90e6f32-1b5d-48c9-9f91-0f099c3b3df6"),
+                            Level = 1,
+                            CreatedOnUtc = new DateTime(2023, 7, 2, 13, 28, 58, 137, DateTimeKind.Utc).AddTicks(3225),
+                            IsDeleted = false
+                        });
                 });
 
             modelBuilder.Entity("FitnessGym.Domain.Entities.Gyms.Gym", b =>
@@ -158,6 +174,16 @@ namespace FitnessGym.Infrastructure.Migrations
                         .IsUnique();
 
                     b.ToTable("Gyms", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("c90e6f32-1b5d-48c9-9f91-0f099c3b3df6"),
+                            CreatedOnUtc = new DateTime(2023, 7, 2, 13, 28, 58, 137, DateTimeKind.Utc).AddTicks(2550),
+                            EmailAddress = "gym.director@gym.usv.ro",
+                            Name = "USV Student Gym",
+                            PhoneNumber = "+7-123-4567"
+                        });
                 });
 
             modelBuilder.Entity("FitnessGym.Domain.Entities.Gyms.GymCheckIn", b =>
@@ -353,7 +379,7 @@ namespace FitnessGym.Infrastructure.Migrations
                             Id = new Guid("8e721037-c9fc-4ca0-80da-b414f5b72d36"),
                             AccesToken = "",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "a3aa84b6-0253-41b9-a21b-55bbe94aaa18",
+                            ConcurrencyStamp = "52f849ea-a465-4ccc-b6ad-469bad9a8079",
                             CreatedOnUtc = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             DateOfBirth = new DateOnly(1990, 5, 20),
                             Email = "manager@gym.director.com",
@@ -364,11 +390,11 @@ namespace FitnessGym.Infrastructure.Migrations
                             LastName = "Cool",
                             LockoutEnabled = false,
                             NormalizedUserName = "MANAGER@GYM.DIRECTOR.COM",
-                            PasswordHash = "AQAAAAIAAYagAAAAEFbRbJbmu8nYxvSs23FRda+J00tLZzHNToHhMOvEqYAHhkQu8J2vqQQXRAzcvfnLJA==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEMrpjHtK0uWp7pyXbx9apptpQXudWZZXoaJBSF9o8IWN/J20XfGTrvUnQzhhiwPF6w==",
                             PhoneNumberConfirmed = false,
                             ProfilePicture = "/images/avatars/1.png",
                             RefreshToken = "",
-                            SecurityStamp = "355a198b-0bb2-4903-9117-5777c05516af",
+                            SecurityStamp = "4038f877-e958-4426-b087-56ee1a8434d0",
                             TwoFactorEnabled = false,
                             UserName = "manager@gym.director.com"
                         },
@@ -377,7 +403,7 @@ namespace FitnessGym.Infrastructure.Migrations
                             Id = new Guid("59bdbc09-57b2-426d-aae9-da830e0382a0"),
                             AccesToken = "",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "2edfa390-9a8d-4f57-ad63-9852b37e9b94",
+                            ConcurrencyStamp = "f5c4d706-c91e-413a-aa2d-1936a71398f8",
                             CreatedOnUtc = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             DateOfBirth = new DateOnly(1995, 8, 15),
                             Email = "trainer@gym.director.com",
@@ -388,11 +414,11 @@ namespace FitnessGym.Infrastructure.Migrations
                             LastName = "Bimius",
                             LockoutEnabled = false,
                             NormalizedUserName = "TRAINER@GYM.DIRECTOR.COM",
-                            PasswordHash = "AQAAAAIAAYagAAAAENZbfEuWWI/RNCj0lA2Q6vgpn27zFjB+qRP8DBW2FxkWsBJL2Zv1vxjalZG750/GmA==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEDMhZ1mFEcvecjSOtXvYQ7/JFuFKY+0hYhCAs8s+cMKLfTeT9Gtyfa6JeLDXjrN25Q==",
                             PhoneNumberConfirmed = false,
                             ProfilePicture = "/images/avatars/1.png",
                             RefreshToken = "",
-                            SecurityStamp = "28570adb-d461-4a19-8492-7ff3985b1604",
+                            SecurityStamp = "8bb891ba-d74c-4885-88e4-4667f9acf1ed",
                             TwoFactorEnabled = false,
                             UserName = "trainer@gym.director.com"
                         },
@@ -401,7 +427,7 @@ namespace FitnessGym.Infrastructure.Migrations
                             Id = new Guid("34c33d5b-e131-4724-95ec-d97f0f4a494b"),
                             AccesToken = "",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "e6d5ee20-aa82-4677-8117-0889f370dd9d",
+                            ConcurrencyStamp = "86702e4a-c234-48b9-a09a-a5272937124c",
                             CreatedOnUtc = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             DateOfBirth = new DateOnly(1993, 2, 10),
                             Email = "technician@gym.director.com",
@@ -412,11 +438,11 @@ namespace FitnessGym.Infrastructure.Migrations
                             LastName = "Geri",
                             LockoutEnabled = false,
                             NormalizedUserName = "TECHNICIAN@GYM.DIRECTOR.COM",
-                            PasswordHash = "AQAAAAIAAYagAAAAECYxmErMSiKI5VomqsWYXI3WXDY/fVIvXubcURFv7zfmLSQFHnz4mOzqnqdO77aitw==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEEwcmtnIXnfrr3BdvcU/i/cBkkzZ7Z6+IE6mDOwiDHJ0zP+oMhuJdCGvTcpeNUQrWw==",
                             PhoneNumberConfirmed = false,
                             ProfilePicture = "/images/avatars/1.png",
                             RefreshToken = "",
-                            SecurityStamp = "cc10a5c0-5683-4722-ba7d-2611955115ec",
+                            SecurityStamp = "3bc41318-90e0-46de-a7d4-da90b36f70c9",
                             TwoFactorEnabled = false,
                             UserName = "technician@gym.director.com"
                         },
@@ -425,7 +451,7 @@ namespace FitnessGym.Infrastructure.Migrations
                             Id = new Guid("8ea4fb46-51bc-415d-9ec0-013683d29411"),
                             AccesToken = "",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "d894bce4-3544-430c-8dcc-a19d3c819624",
+                            ConcurrencyStamp = "abba2800-912b-467b-a22f-c933fd0af0a7",
                             CreatedOnUtc = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             DateOfBirth = new DateOnly(2000, 8, 6),
                             Email = "receptionist@gym.director.com",
@@ -436,11 +462,11 @@ namespace FitnessGym.Infrastructure.Migrations
                             LastName = "Tuiar",
                             LockoutEnabled = false,
                             NormalizedUserName = "RECEPTIONIST@GYM.DIRECTOR.COM",
-                            PasswordHash = "AQAAAAIAAYagAAAAEM9CeFjYj6oyt1/UWh0OeZ0/GIiUbsVOSz7zryGVnPqHa7kK+dIbvPOdek0hYHw75w==",
+                            PasswordHash = "AQAAAAIAAYagAAAAELStq/iLbrwKq9wPLGbd9ZDxURTY2ReIWJvqkmkffUBzb2qojXAfeolrwXve+IUz3w==",
                             PhoneNumberConfirmed = false,
                             ProfilePicture = "/images/avatars/1.png",
                             RefreshToken = "",
-                            SecurityStamp = "27cb06f0-6ee2-407a-8dc1-537cebe8371d",
+                            SecurityStamp = "a2054e90-59ad-49ed-a88e-ec3d786dba33",
                             TwoFactorEnabled = false,
                             UserName = "receptionist@gym.director.com"
                         });
@@ -835,6 +861,16 @@ namespace FitnessGym.Infrastructure.Migrations
 
                             b1.WithOwner()
                                 .HasForeignKey("GymId");
+
+                            b1.HasData(
+                                new
+                                {
+                                    GymId = new Guid("c90e6f32-1b5d-48c9-9f91-0f099c3b3df6"),
+                                    BuildingNumber = "13",
+                                    City = "Suceava",
+                                    Country = "Romania",
+                                    Street = "Strada Universității"
+                                });
                         });
 
                     b.OwnsOne("FitnessGym.Domain.Entities.Gyms.GeoCoordinate", "GeoCoordinate", b1 =>
@@ -855,6 +891,14 @@ namespace FitnessGym.Infrastructure.Migrations
 
                             b1.WithOwner()
                                 .HasForeignKey("GymId");
+
+                            b1.HasData(
+                                new
+                                {
+                                    GymId = new Guid("c90e6f32-1b5d-48c9-9f91-0f099c3b3df6"),
+                                    Latitude = 47.640958m,
+                                    Longitude = 26.243436m
+                                });
                         });
 
                     b.OwnsOne("FitnessGym.Domain.Entities.Gyms.Layout", "Layout", b1 =>
@@ -878,6 +922,15 @@ namespace FitnessGym.Infrastructure.Migrations
 
                             b1.WithOwner()
                                 .HasForeignKey("GymId");
+
+                            b1.HasData(
+                                new
+                                {
+                                    GymId = new Guid("c90e6f32-1b5d-48c9-9f91-0f099c3b3df6"),
+                                    FloorNumber = 2,
+                                    Length = 15,
+                                    Width = 12
+                                });
                         });
 
                     b.Navigation("Address")
